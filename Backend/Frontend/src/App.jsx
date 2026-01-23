@@ -14,6 +14,8 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminProfile from "./pages/Admin/AdminProfile";
 import UserManagement from "./pages/Admin/UserManagement";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
+import DepartmentManagement from "./pages/Admin/DepartmentManagement";
+import ComplaintOversight from "./pages/Admin/ComplaintOversight";
 import CommonLogin from "./pages/CommonLogin"; // Ensure CommonLogin is imported
 import CommonRegister from "./pages/CommonRegister"; // Ensure CommonRegister is imported
 import AdminAnalytics from "./pages/Admin/AdminAnalytics";
@@ -46,14 +48,14 @@ export default function App() {
     );
   }
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <NavBar/>
+          <NavBar />
           <main style={{ flex: 1 }}>
             <Routes>
               <Route path="/" element={<Landing />} />
-              
+
               {/* Auth Routes */}
               <Route path="/citizen/login" element={<CommonLogin role="citizen" />} />
               <Route path="/citizen/register" element={<CommonRegister role="citizen" />} />
@@ -85,6 +87,8 @@ export default function App() {
               <Route path="/admin/users" element={<ProtectedRoute role="admin"><UserManagement /></ProtectedRoute>} />
               <Route path="/admin/profile" element={<ProtectedRoute role="admin"><AdminProfile /></ProtectedRoute>} />
               <Route path="/admin/categories" element={<ProtectedRoute role="admin"><CategoryManagement /></ProtectedRoute>} />
+              <Route path="/admin/departments" element={<ProtectedRoute role="admin"><DepartmentManagement /></ProtectedRoute>} />
+              <Route path="/admin/complaints" element={<ProtectedRoute role="admin"><ComplaintOversight /></ProtectedRoute>} />
               <Route path="/admin/analytics" element={<ProtectedRoute role="admin"><AdminAnalytics /></ProtectedRoute>} />
             </Routes>
           </main>

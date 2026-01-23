@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    enum: ['Roads & Infrastructure', 'Sanitation', 'Electricity', 'Water Supply', 'Drainage', 'Traffic Management', 'Public Property', 'Encroachment', 'Others', null],
     default: null
   },
   // This field is crucial for the approval process

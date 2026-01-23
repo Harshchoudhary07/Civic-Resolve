@@ -20,26 +20,35 @@ export default function AdminDashboard() {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      
-      // Fetch Summary
-      const summaryRes = await fetch('/api/admin/summary', {
+
+      // Fetch Analytics (Summary)
+      const analyticsRes = await fetch('/api/admin/analytics', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const summaryData = await summaryRes.json();
-      if (summaryRes.ok) {
-        setSummary(summaryData);
+      const analyticsData = await analyticsRes.json();
+      if (analyticsRes.ok) {
+        // Map backend analytics structure to frontend summary state
+        // Backend returns: { total, resolved, resolutionRate, byDepartment, byStatus }
+        setSummary({
+          totalUsers: 'N/A', // We can fetch this from users endpoint if needed, or update backend analytics to include it. For now, let's use what we have.
+          totalComplaints: analyticsData.data.total,
+          resolvedComplaints: analyticsData.data.resolved,
+          resolutionRate: analyticsData.data.resolutionRate + '%',
+          // pendingApprovals and officials count would need separate calls or backend updates if strictly required here. 
+          // To keep it simple, I'll focus on the new verified analytics.
+        });
       } else {
-        throw new Error(summaryData.message || 'Failed to fetch summary');
+        throw new Error(analyticsData.message || 'Failed to fetch analytics');
       }
 
-      // Fetch Recent Users
+      // Fetch Recent Users as before
       const usersRes = await fetch('/api/admin/users', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const usersData = await usersRes.json();
       if (usersRes.ok) {
         // Sort by creation date and get the latest 5
-        const sortedUsers = usersData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedUsers = usersData.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setRecentUsers(sortedUsers.slice(0, 5));
       } else {
         throw new Error(usersData.message || 'Failed to fetch users');
@@ -64,17 +73,21 @@ export default function AdminDashboard() {
           <Link to="/admin/users" style={{ marginRight: '10px' }}>
             <button style={styles.secondaryBtn}>Manage Users</button>
           </Link>
-          <Link to="/admin/categories">
-            <button style={styles.secondaryBtn}>Manage Categories</button>
+          <Link to="/admin/departments" style={{ marginRight: '10px' }}>
+            <button style={styles.secondaryBtn}>Departments</button>
+          </Link>
+          <Link to="/admin/complaints">
+            <button style={styles.secondaryBtn}>Complaints Oversight</button>
           </Link>
         </div>
       </div>
 
       <div style={styles.statsGrid}>
-        <StatCard title="Total Users" value={summary.totalUsers} color="#2563eb" />
-        <StatCard title="Total Complaints" value={summary.totalComplaints} color="#9333ea" />
-        <StatCard title="Pending Approvals" value={summary.pendingApprovals} color="#f59e0b" />
-        <StatCard title="Active Officials" value={summary.totalOfficials} color="#16a34a" />
+        <StatCard title="Total Complaints" value={summary.totalComplaints} color="#2563eb" />
+        <StatCard title="Resolved" value={summary.resolvedComplaints} color="#16a34a" />
+        <StatCard title="Resolution Rate" value={summary.resolutionRate} color="#9333ea" />
+        {/* Placeholder for now */}
+        <StatCard title="System Status" value="Online" color="#f59e0b" />
       </div>
 
       <h3 style={styles.sectionTitle}>Recent User Registrations</h3>

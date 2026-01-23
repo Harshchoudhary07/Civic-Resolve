@@ -76,10 +76,10 @@ export default function OfficialDashboard() {
 
       {/* Stats Row */}
       <div style={styles.statsGrid}>
-        <StatCard title="Total Active" value={stats.total} color="#2563eb" />
-        <StatCard title="Pending" value={stats.breakdown['Pending'] || 0} color="#ef4444" />
-        <StatCard title="In Progress" value={stats.breakdown['In Progress'] || 0} color="#f59e0b" />
-        <StatCard title="Resolved" value={stats.breakdown['Resolved'] || 0} color="#16a34a" />
+        <StatCard title="Total Active" value={stats.total || 0} color="#2563eb" />
+        <StatCard title="Pending" value={stats.breakdown?.['Pending'] || 0} color="#ef4444" />
+        <StatCard title="In Progress" value={stats.breakdown?.['In Progress'] || 0} color="#f59e0b" />
+        <StatCard title="Resolved" value={stats.breakdown?.['Resolved'] || 0} color="#16a34a" />
       </div>
 
       {/* Priority Feed */}

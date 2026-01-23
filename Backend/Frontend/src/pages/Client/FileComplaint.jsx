@@ -1,14 +1,30 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  HiDocumentText, 
-  HiClipboardDocumentList, 
-  HiMapPin, 
-  HiCheckCircle, 
-  HiArrowPath, 
+import {
+  HiDocumentText,
+  HiClipboardDocumentList,
+  HiMapPin,
+  HiCheckCircle,
+  HiArrowPath,
   HiExclamationTriangle,
   HiCamera
 } from 'react-icons/hi2';
+import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
+
+// Google Maps configuration
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+const mapContainerStyle = {
+  width: '100%',
+  height: '100%'
+};
+
+const defaultMapOptions = {
+  zoomControl: true,
+  streetViewControl: false,
+  mapTypeControl: false,
+  fullscreenControl: true,
+};
 
 export default function FileComplaint() {
   const navigate = useNavigate();
@@ -19,6 +35,12 @@ export default function FileComplaint() {
   const mediaRecorderRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaFile, setMediaFile] = useState(null); // State for the captured File object
+  const [showInfoWindow, setShowInfoWindow] = useState(false);
+
+  // Load Google Maps API
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
 
   const [formData, setFormData] = useState({
     title: "",
@@ -99,15 +121,41 @@ export default function FileComplaint() {
 
     setLoading(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
-        setFormData(prev => ({
-          ...prev,
-          latitude,
-          longitude,
-          location: `Using GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
-        }));
-        setLoading(false);
+        try {
+          // Reverse Geocoding via Nominatim (OpenStreetMap)
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await response.json();
+
+          const address = data.display_name || `Lat: ${latitude.toFixed(4)}, Long: ${longitude.toFixed(4)}`;
+
+          let city = data.address.city || data.address.town || data.address.village || data.address.county || "";
+          let area = data.address.suburb || data.address.neighbourhood || data.address.road || "";
+
+          // Construct a shorter, friendlier location string
+          let shortLocation = "";
+          if (area && city) shortLocation = `${area}, ${city}`;
+          else if (city) shortLocation = city;
+          else shortLocation = address;
+
+          setFormData(prev => ({
+            ...prev,
+            latitude,
+            longitude,
+            location: shortLocation
+          }));
+        } catch (err) {
+          console.error("Geocoding error:", err);
+          setFormData(prev => ({
+            ...prev,
+            latitude,
+            longitude,
+            location: `Lat: ${latitude.toFixed(4)}, Long: ${longitude.toFixed(4)}`
+          }));
+        } finally {
+          setLoading(false);
+        }
       },
       () => {
         setError("Unable to retrieve your location. Please enter it manually.");
@@ -184,9 +232,21 @@ export default function FileComplaint() {
   return (
     <div style={styles.pageContainer}>
       <div style={styles.container}>
+        <style>{`
+          .file-complaint-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 32px;
+          }
+          @media (max-width: 1024px) {
+            .file-complaint-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        `}</style>
         {/* Header Section */}
         <div style={styles.header}>
-          <h2 style={styles.title}><HiDocumentText style={{display: 'inline', marginRight: '8px'}} />File a New Complaint</h2>
+          <h2 style={styles.title}><HiDocumentText style={{ display: 'inline', marginRight: '8px' }} />File a New Complaint</h2>
           <p style={styles.subtitle}>Help us serve you better by providing detailed information about the issue.</p>
         </div>
 
@@ -208,7 +268,7 @@ export default function FileComplaint() {
           </div>
         </div>
 
-        <div style={styles.contentGrid}>
+        <div className="file-complaint-grid">
           {/* Main Form */}
           <div style={styles.formSection}>
             <form onSubmit={handleSubmit} style={styles.form}>
@@ -255,7 +315,7 @@ export default function FileComplaint() {
                     <option value="Electricity">⚡ Electricity</option>
                     <option value="Public Safety">🚨 Public Safety</option>
                     <option value="Parks & Recreation">🌳 Parks & Recreation</option>
-                    <option value="Other"><HiMapPin style={{display: 'inline', marginRight: '4px'}} />Other</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
               </div>
@@ -308,8 +368,44 @@ export default function FileComplaint() {
                     {loading ? "Detecting..." : "Use My Current Location"}
                   </button>
                   {formData.latitude && formData.longitude && (
+                    <div style={{ marginTop: '1rem', height: '300px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                      {loadError ? (
+                        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--error)' }}>
+                          Error loading Google Maps
+                        </div>
+                      ) : !isLoaded ? (
+                        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--muted)' }}>
+                          Loading map...
+                        </div>
+                      ) : (
+                        <GoogleMap
+                          mapContainerStyle={mapContainerStyle}
+                          center={{ lat: formData.latitude, lng: formData.longitude }}
+                          zoom={15}
+                          options={defaultMapOptions}
+                        >
+                          <Marker
+                            position={{ lat: formData.latitude, lng: formData.longitude }}
+                            onClick={() => setShowInfoWindow(true)}
+                          />
+                          {showInfoWindow && (
+                            <InfoWindow
+                              position={{ lat: formData.latitude, lng: formData.longitude }}
+                              onCloseClick={() => setShowInfoWindow(false)}
+                            >
+                              <div style={{ color: '#000', padding: '4px' }}>
+                                <strong>{formData.location}</strong>
+                              </div>
+                            </InfoWindow>
+                          )}
+                        </GoogleMap>
+                      )}
+                    </div>
+                  )}
+                  {formData.latitude && formData.longitude && (
                     <div style={styles.gpsIndicator}>
-                      <HiCheckCircle style={{display: 'inline', marginRight: '4px'}} />GPS coordinates captured
+                      <div><strong>Detected:</strong> {formData.location}</div>
+                      <div style={{ fontSize: '0.85em', opacity: 0.8 }}>Lat: {formData.latitude.toFixed(6)}, Long: {formData.longitude.toFixed(6)}</div>
                     </div>
                   )}
                 </div>
@@ -331,7 +427,7 @@ export default function FileComplaint() {
                       {!isRecording ? (
                         <div style={styles.cameraActions}>
                           <button type="button" onClick={handleCapturePhoto} style={styles.captureBtn}>
-                            <HiCamera style={{display: 'inline', marginRight: '4px'}} />Capture Photo
+                            <HiCamera style={{ display: 'inline', marginRight: '4px' }} />Capture Photo
                           </button>
                           <button type="button" onClick={handleStartRecording} style={styles.recordBtn}>
                             🎥 Start Recording
@@ -352,7 +448,7 @@ export default function FileComplaint() {
                         <img src={URL.createObjectURL(mediaFile)} alt="Captured evidence" style={styles.previewMedia} /> :
                         <video src={URL.createObjectURL(mediaFile)} controls style={styles.previewMedia} />
                       }
-                      <button type="button" onClick={handleRetake} style={styles.retakeBtn}><HiArrowPath style={{display: 'inline', marginRight: '4px'}} />Retake</button>
+                      <button type="button" onClick={handleRetake} style={styles.retakeBtn}><HiArrowPath style={{ display: 'inline', marginRight: '4px' }} />Retake</button>
                     </div>
                   )}
 
@@ -391,7 +487,7 @@ export default function FileComplaint() {
           {/* Information Sidebar */}
           <div style={styles.infoSection}>
             <div style={styles.infoCard}>
-              <h3 style={styles.infoTitle}><HiClipboardDocumentList style={{display: 'inline', marginRight: '8px'}} />What Happens Next?</h3>
+              <h3 style={styles.infoTitle}><HiClipboardDocumentList style={{ display: 'inline', marginRight: '8px' }} />What Happens Next?</h3>
               <div style={styles.timeline}>
                 <div style={styles.timelineItem}>
                   <div style={styles.timelineIcon}>1️⃣</div>
@@ -526,12 +622,7 @@ const styles = {
     marginBottom: "28px"
   },
   contentGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 380px",
-    gap: "32px",
-    "@media (max-width: 1024px)": {
-      gridTemplateColumns: "1fr"
-    }
+    // Handled by CSS class .file-complaint-grid
   },
   formSection: {
     flex: 1
