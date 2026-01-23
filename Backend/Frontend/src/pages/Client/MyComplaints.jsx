@@ -158,7 +158,7 @@ export default function MyComplaints() {
                   <div style={styles.listItemMeta}>
                     <span>📅 {new Date(c.createdAt).toLocaleDateString()}</span>
                     <span>📂 {c.category}</span>
-                    <span><HiMapPin style={{display: 'inline', marginRight: '4px'}} />{c.location || 'No location'}</span>
+                    <span><HiMapPin style={{display: 'inline', marginRight: '4px'}} />{c.location?.address || 'No location'}</span>
                   </div>
                 </div>
               ) : (
