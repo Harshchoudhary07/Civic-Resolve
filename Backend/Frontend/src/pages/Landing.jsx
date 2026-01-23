@@ -28,7 +28,7 @@ export default function Landing() {
   return (
     <div style={styles.wrapper}>
       {/* Hero Section */}
-      <section style={styles.hero}>
+      <section className="hero-gradient" style={styles.hero}>
         <div style={styles.heroContent}>
           {/* Government Emblem */}
           <div style={styles.emblem}>
@@ -44,13 +44,13 @@ export default function Landing() {
           {/* Primary CTA */}
           <div style={styles.ctaGroup}>
             <Link to="/citizen/login" style={{ textDecoration: 'none' }}>
-              <button style={styles.primaryCta}>
+              <button className="btn-gradient-cta" style={styles.primaryCta}>
                 <HiRocketLaunch style={{ display: 'inline', marginRight: '8px' }} />
                 Get Started as Citizen
               </button>
             </Link>
             <Link to="/citizen/register" style={{ textDecoration: 'none' }}>
-              <button style={styles.secondaryCta}>
+              <button className="btn-gradient-secondary" style={styles.secondaryCta}>
                 Register New Account
               </button>
             </Link>
@@ -70,7 +70,7 @@ export default function Landing() {
         <div style={styles.container}>
           <h2 style={styles.sectionTitle}>How It Works</h2>
           <div style={styles.featureGrid}>
-            <div style={styles.featureCard}>
+            <div className="card-gradient-hover" style={styles.featureCard}>
               <div style={styles.featureIcon}><HiDocumentText /></div>
               <h3 style={styles.featureTitle}>File Complaint</h3>
               <p style={styles.featureText}>
@@ -78,7 +78,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div style={styles.featureCard}>
+            <div className="card-gradient-hover" style={styles.featureCard}>
               <div style={styles.featureIcon}><HiArrowPath /></div>
               <h3 style={styles.featureTitle}>Auto Escalation</h3>
               <p style={styles.featureText}>
@@ -86,7 +86,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div style={styles.featureCard}>
+            <div className="card-gradient-hover" style={styles.featureCard}>
               <div style={styles.featureIcon}><HiChartBar /></div>
               <h3 style={styles.featureTitle}>Track Progress</h3>
               <p style={styles.featureText}>
@@ -94,7 +94,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div style={styles.featureCard}>
+            <div className="card-gradient-hover" style={styles.featureCard}>
               <div style={styles.featureIcon}><HiCheckCircle /></div>
               <h3 style={styles.featureTitle}>Transparency</h3>
               <p style={styles.featureText}>

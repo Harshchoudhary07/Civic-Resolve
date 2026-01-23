@@ -1,0 +1,528 @@
+/* ===================================
+   GRADIENT DESIGN SYSTEM
+   Modern gradient system with premium hover effects
+   =================================== */
+
+/* ===================================
+   GRADIENT COLOR VARIABLES
+   =================================== */
+:root {
+  /* Primary Gradients */
+  --gradient-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #003366 0%, #1e40af 100%);
+  --gradient-primary-intense: linear-gradient(135deg, #003366 0%, #3b82f6 100%);
+  
+  /* Saffron/Orange Gradients (CTA) */
+  --gradient-saffron: linear-gradient(135deg, #FF9933 0%, #f59e0b 100%);
+  --gradient-saffron-hover: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-saffron-intense: linear-gradient(135deg, #FF9933 0%, #d97706 100%);
+  
+  /* Success Gradients */
+  --gradient-success: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  --gradient-success-hover: linear-gradient(135deg, #047857 0%, #059669 100%);
+  
+  /* Hero/Background Gradients */
+  --gradient-hero: linear-gradient(135deg, #003366 0%, #1e40af 50%, #3b82f6 100%);
+  --gradient-hero-radial: radial-gradient(circle at top right, #3b82f6, #1e40af, #003366);
+  
+  /* Subtle Background Gradients */
+  --gradient-bg-subtle: linear-gradient(180deg, var(--bg) 0%, var(--bg-secondary) 100%);
+  --gradient-card-subtle: linear-gradient(135deg, var(--card) 0%, var(--card-hover) 100%);
+  
+  /* Border Gradients */
+  --gradient-border: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  --gradient-border-saffron: linear-gradient(135deg, #FF9933 0%, #f59e0b 100%);
+  
+  /* Glow Colors for Hover Effects */
+  --glow-primary: rgba(59, 130, 246, 0.4);
+  --glow-saffron: rgba(255, 153, 51, 0.4);
+  --glow-success: rgba(16, 185, 129, 0.4);
+  
+  /* Timing Functions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-fast: 200ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+}
+
+/* ===================================
+   KEYFRAME ANIMATIONS
+   =================================== */
+
+/* Gradient Shift Animation */
+@keyframes gradient-shift {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+/* Pulse Glow Animation */
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px var(--glow-primary); 
+  }
+  50% { 
+    box-shadow: 0 0 40px var(--glow-primary), 0 0 60px var(--glow-primary); 
+  }
+}
+
+/* Pulse Glow Saffron */
+@keyframes pulse-glow-saffron {
+  0%, 100% { 
+    box-shadow: 0 0 20px var(--glow-saffron); 
+  }
+  50% { 
+    box-shadow: 0 0 40px var(--glow-saffron), 0 0 60px var(--glow-saffron); 
+  }
+}
+
+/* Gradient Border Rotate */
+@keyframes gradient-border-rotate {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* ===================================
+   BUTTON STYLES WITH GRADIENTS
+   =================================== */
+
+/* Primary Button - Blue Gradient */
+.btn-gradient-primary,
+button.btn-gradient-primary {
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--ease-smooth);
+  box-shadow: 0 4px 6px rgba(30, 64, 175, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient-primary:hover:not(:disabled) {
+  background: var(--gradient-primary-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(30, 64, 175, 0.3), 0 0 20px var(--glow-primary);
+}
+
+.btn-gradient-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
+}
+
+.btn-gradient-primary:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+.btn-gradient-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* CTA Button - Saffron Gradient with Pulse */
+.btn-gradient-cta,
+button.btn-gradient-cta {
+  background: var(--gradient-saffron);
+  background-size: 200% 200%;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--ease-smooth);
+  box-shadow: 0 4px 8px rgba(255, 153, 51, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient-cta:hover:not(:disabled) {
+  background: var(--gradient-saffron-hover);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(255, 153, 51, 0.4), 0 0 30px var(--glow-saffron);
+  animation: pulse-glow-saffron 2s ease-in-out infinite;
+}
+
+.btn-gradient-cta:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  animation: none;
+}
+
+.btn-gradient-cta:focus-visible {
+  outline: 3px solid rgba(255, 153, 51, 0.5);
+  outline-offset: 2px;
+}
+
+/* Secondary Button - Gradient Border */
+.btn-gradient-secondary,
+button.btn-gradient-secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--card), var(--card)), var(--gradient-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--ease-smooth);
+  position: relative;
+}
+
+.btn-gradient-secondary:hover:not(:disabled) {
+  background-image: linear-gradient(var(--card-hover), var(--card-hover)), var(--gradient-primary-hover);
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+}
+
+.btn-gradient-secondary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-gradient-secondary:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Success Button - Green Gradient */
+.btn-gradient-success,
+button.btn-gradient-success {
+  background: var(--gradient-success);
+  background-size: 200% 200%;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--ease-smooth);
+  box-shadow: 0 4px 6px rgba(5, 150, 105, 0.15);
+}
+
+.btn-gradient-success:hover:not(:disabled) {
+  background: var(--gradient-success-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(5, 150, 105, 0.3), 0 0 20px var(--glow-success);
+}
+
+.btn-gradient-success:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Ghost Button with Gradient Hover */
+.btn-gradient-ghost,
+button.btn-gradient-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient-ghost::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: all var(--transition-normal) var(--ease-smooth);
+  z-index: -1;
+}
+
+.btn-gradient-ghost:hover:not(:disabled)::before {
+  left: 0;
+  opacity: 0.1;
+}
+
+.btn-gradient-ghost:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: scale(1.02);
+}
+
+/* Icon Button with Gradient Glow */
+.btn-icon-gradient,
+button.btn-icon-gradient {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--ease-smooth);
+}
+
+.btn-icon-gradient:hover:not(:disabled) {
+  background: var(--gradient-primary);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px var(--glow-primary);
+}
+
+/* ===================================
+   CARD GRADIENTS
+   =================================== */
+
+/* Card with Gradient Border */
+.card-gradient-border {
+  background: var(--card);
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--card), var(--card)), var(--gradient-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 12px;
+  padding: 24px;
+  transition: all var(--transition-normal) var(--ease-smooth);
+}
+
+.card-gradient-border:hover {
+  background-image: linear-gradient(var(--card-hover), var(--card-hover)), var(--gradient-primary-intense);
+  box-shadow: 0 8px 24px rgba(30, 64, 175, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Card with Gradient Overlay on Hover */
+.card-gradient-hover {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal) var(--ease-smooth);
+}
+
+.card-gradient-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal) var(--ease-smooth);
+  z-index: 0;
+}
+
+.card-gradient-hover:hover::before {
+  opacity: 0.05;
+}
+
+.card-gradient-hover:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(30, 64, 175, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Stat Card with Gradient Background */
+.stat-card-gradient {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(30, 64, 175, 0.2);
+  transition: all var(--transition-normal) var(--ease-smooth);
+}
+
+.stat-card-gradient:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(30, 64, 175, 0.3), 0 0 30px var(--glow-primary);
+}
+
+/* ===================================
+   FORM ELEMENTS WITH GRADIENTS
+   =================================== */
+
+/* Input with Gradient Focus */
+input.input-gradient-focus:focus,
+textarea.input-gradient-focus:focus,
+select.input-gradient-focus:focus {
+  outline: none;
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--card), var(--card)), var(--gradient-border);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ===================================
+   BADGES & INDICATORS
+   =================================== */
+
+/* Badge with Gradient */
+.badge-gradient {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-gradient-saffron {
+  background: var(--gradient-saffron);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Progress Bar with Gradient */
+.progress-gradient {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-gradient-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+  transition: width var(--transition-normal) var(--ease-smooth);
+}
+
+/* ===================================
+   SECTION BACKGROUNDS
+   =================================== */
+
+/* Hero Section with Gradient */
+.hero-gradient {
+  background: var(--gradient-hero);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-gradient::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: gradient-shift 10s ease infinite;
+}
+
+/* Section with Subtle Gradient Background */
+.section-gradient-bg {
+  background: var(--gradient-bg-subtle);
+  position: relative;
+}
+
+/* ===================================
+   DIVIDERS WITH GRADIENTS
+   =================================== */
+
+.divider-gradient {
+  height: 2px;
+  background: var(--gradient-border);
+  margin: 32px 0;
+  border: none;
+}
+
+.divider-gradient-vertical {
+  width: 2px;
+  height: 100%;
+  background: var(--gradient-border);
+  margin: 0 16px;
+}
+
+/* ===================================
+   ACCESSIBILITY - REDUCED MOTION
+   =================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+/* Text Gradient */
+.text-gradient-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+.text-gradient-saffron {
+  background: var(--gradient-saffron);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Glow Effect */
+.glow-primary {
+  box-shadow: 0 0 20px var(--glow-primary);
+}
+
+.glow-saffron {
+  box-shadow: 0 0 20px var(--glow-saffron);
+}
+
+/* Animated Background Gradient */
+.bg-gradient-animated {
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}

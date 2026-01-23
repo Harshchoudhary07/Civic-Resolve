@@ -6,7 +6,8 @@ import {
   HiMapPin, 
   HiCheckCircle, 
   HiArrowPath, 
-  HiExclamationTriangle 
+  HiExclamationTriangle,
+  HiCamera
 } from 'react-icons/hi2';
 
 export default function FileComplaint() {
@@ -220,6 +221,7 @@ export default function FileComplaint() {
                 <div style={styles.group}>
                   <label style={styles.label}>Title *</label>
                   <input
+                    className="input-gradient-focus"
                     style={styles.input}
                     placeholder="Brief, descriptive title (e.g., 'Broken streetlight on Main Road')"
                     name="title"
@@ -239,6 +241,7 @@ export default function FileComplaint() {
                 <div style={styles.group}>
                   <label style={styles.label}>Select Category *</label>
                   <select
+                    className="input-gradient-focus"
                     style={styles.input}
                     name="category"
                     value={formData.category}
@@ -266,6 +269,7 @@ export default function FileComplaint() {
                 <div style={styles.group}>
                   <label style={styles.label}>Detailed Description *</label>
                   <textarea
+                    className="input-gradient-focus"
                     style={{ ...styles.input, ...styles.textarea }}
                     placeholder="Provide a detailed description of the issue. Include when it started, how it affects you, and any other relevant information..."
                     name="description"
@@ -296,6 +300,7 @@ export default function FileComplaint() {
                   <button
                     type="button"
                     onClick={handleDetectLocation}
+                    className="btn-gradient-primary"
                     style={styles.locationBtn}
                     disabled={loading}
                   >
@@ -326,7 +331,7 @@ export default function FileComplaint() {
                       {!isRecording ? (
                         <div style={styles.cameraActions}>
                           <button type="button" onClick={handleCapturePhoto} style={styles.captureBtn}>
-                            📷 Capture Photo
+                            <HiCamera style={{display: 'inline', marginRight: '4px'}} />Capture Photo
                           </button>
                           <button type="button" onClick={handleStartRecording} style={styles.recordBtn}>
                             🎥 Start Recording
@@ -367,7 +372,7 @@ export default function FileComplaint() {
                 </div>
               )}
 
-              <button type="submit" style={styles.submitBtn} disabled={loading}>
+              <button type="submit" className="btn-gradient-success" style={styles.submitBtn} disabled={loading}>
                 {loading ? (
                   <>
                     <span style={styles.spinner}>⏳</span>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { HiCamera } from 'react-icons/hi2';
 
 export default function CitizenProfile() {
   const { user, updateUserContext } = useAuth();
@@ -101,7 +102,7 @@ export default function CitizenProfile() {
               alt="Profile"
               style={styles.avatar}
             />
-            <div style={styles.avatarOverlay}>📷</div>
+            <div style={styles.avatarOverlay}><HiCamera /></div>
             <input
               type="file"
               ref={fileInputRef}
