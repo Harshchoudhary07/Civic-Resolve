@@ -1,6 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { 
+  HiHandRaised, 
+  HiDocumentText, 
+  HiChartBar, 
+  HiExclamationCircle, 
+  HiClock, 
+  HiCheckCircle, 
+  HiClipboardDocumentList, 
+  HiUser, 
+  HiQuestionMarkCircle, 
+  HiInboxArrowDown, 
+  HiFolder, 
+  HiCalendar, 
+  HiPhone, 
+  HiEnvelope, 
+  HiMegaphone, 
+  HiSparkles, 
+  HiBolt 
+} from 'react-icons/hi2';
 
 export default function CitizenHome() {
   const { user } = useAuth();
@@ -53,11 +72,11 @@ export default function CitizenHome() {
       {/* Welcome Header */}
       <div style={styles.welcomeSection}>
         <div>
-          <h1 style={styles.greeting}>{getGreeting()}, {user?.name || 'Citizen'}! 👋</h1>
+          <h1 style={styles.greeting}>{getGreeting()}, {user?.name || 'Citizen'}! <HiHandRaised style={{ display: 'inline' }} /></h1>
           <p style={styles.welcomeText}>Track your complaints and stay updated on resolutions</p>
         </div>
         <Link to="/citizen/file-complaint" style={styles.primaryButton}>
-          <span style={styles.buttonIcon}>📝</span>
+          <span style={styles.buttonIcon}><HiDocumentText /></span>
           File New Complaint
         </Link>
       </div>
@@ -65,28 +84,28 @@ export default function CitizenHome() {
       {/* Statistics Cards */}
       <div style={styles.statsGrid}>
         <div style={{ ...styles.statCard, ...styles.statCardTotal }}>
-          <div style={styles.statIcon}>📊</div>
+          <div style={styles.statIcon}><HiChartBar /></div>
           <div style={styles.statContent}>
             <div style={styles.statValue}>{loading ? '...' : stats.total}</div>
             <div style={styles.statLabel}>Total Complaints</div>
           </div>
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardOpen }}>
-          <div style={styles.statIcon}>🔴</div>
+          <div style={styles.statIcon}><HiExclamationCircle style={{color: '#ef4444'}} /></div>
           <div style={styles.statContent}>
             <div style={styles.statValue}>{loading ? '...' : stats.open}</div>
             <div style={styles.statLabel}>Open</div>
           </div>
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardProgress }}>
-          <div style={styles.statIcon}>🔵</div>
+          <div style={styles.statIcon}><HiClock style={{color: '#3b82f6'}} /></div>
           <div style={styles.statContent}>
             <div style={styles.statValue}>{loading ? '...' : stats.inProgress}</div>
             <div style={styles.statLabel}>In Progress</div>
           </div>
         </div>
         <div style={{ ...styles.statCard, ...styles.statCardResolved }}>
-          <div style={styles.statIcon}>✅</div>
+          <div style={styles.statIcon}><HiCheckCircle /></div>
           <div style={styles.statContent}>
             <div style={styles.statValue}>{loading ? '...' : stats.resolved}</div>
             <div style={styles.statLabel}>Resolved</div>
@@ -99,22 +118,22 @@ export default function CitizenHome() {
         <h2 style={styles.sectionTitle}>Quick Actions</h2>
         <div style={styles.quickActionsGrid}>
           <Link to="/citizen/file-complaint" style={styles.actionCard}>
-            <div style={styles.actionIcon}>📝</div>
+            <div style={styles.actionIcon}><HiDocumentText /></div>
             <div style={styles.actionTitle}>File Complaint</div>
             <div style={styles.actionDesc}>Report a new issue</div>
           </Link>
           <Link to="/citizen/my-complaints" style={styles.actionCard}>
-            <div style={styles.actionIcon}>📋</div>
+            <div style={styles.actionIcon}><HiClipboardDocumentList /></div>
             <div style={styles.actionTitle}>My Complaints</div>
             <div style={styles.actionDesc}>View all complaints</div>
           </Link>
           <Link to="/citizen/profile" style={styles.actionCard}>
-            <div style={styles.actionIcon}>👤</div>
+            <div style={styles.actionIcon}><HiUser /></div>
             <div style={styles.actionTitle}>Profile</div>
             <div style={styles.actionDesc}>Update your details</div>
           </Link>
           <a href="#help" style={styles.actionCard}>
-            <div style={styles.actionIcon}>❓</div>
+            <div style={styles.actionIcon}><HiQuestionMarkCircle /></div>
             <div style={styles.actionTitle}>Help & FAQ</div>
             <div style={styles.actionDesc}>Get assistance</div>
           </a>
@@ -133,7 +152,7 @@ export default function CitizenHome() {
               <div style={styles.loadingText}>Loading...</div>
             ) : recentComplaints.length === 0 ? (
               <div style={styles.emptyState}>
-                <div style={styles.emptyIcon}>📭</div>
+                <div style={styles.emptyIcon}><HiInboxArrowDown /></div>
                 <div style={styles.emptyTitle}>No complaints yet</div>
                 <div style={styles.emptyText}>File your first complaint to get started</div>
                 <Link to="/citizen/file-complaint" style={styles.emptyButton}>
@@ -148,8 +167,8 @@ export default function CitizenHome() {
                     <span style={getStatusStyle(complaint.currentStatus)}>{complaint.currentStatus}</span>
                   </div>
                   <div style={styles.recentItemMeta}>
-                    <span>📂 {complaint.category}</span>
-                    <span>📅 {new Date(complaint.createdAt).toLocaleDateString()}</span>
+                    <span><HiFolder style={{display: 'inline', marginRight: '4px'}} />{complaint.category}</span>
+                    <span><HiCalendar style={{display: 'inline', marginRight: '4px'}} />{new Date(complaint.createdAt).toLocaleDateString()}</span>
                   </div>
                 </Link>
               ))
@@ -159,10 +178,10 @@ export default function CitizenHome() {
 
         {/* Announcements & Resources */}
         <div style={styles.section}>
-          <h2 style={styles.sectionTitle}>📢 Announcements</h2>
+          <h2 style={styles.sectionTitle}><HiMegaphone style={{display: 'inline', marginRight: '8px'}} />Announcements</h2>
           <div style={styles.announcementList}>
             <div style={styles.announcementItem}>
-              <div style={styles.announcementIcon}>🎉</div>
+              <div style={styles.announcementIcon}><HiSparkles /></div>
               <div>
                 <div style={styles.announcementTitle}>New Feature: Live Evidence Upload</div>
                 <div style={styles.announcementText}>You can now capture photos and videos directly while filing complaints</div>
@@ -170,7 +189,7 @@ export default function CitizenHome() {
               </div>
             </div>
             <div style={styles.announcementItem}>
-              <div style={styles.announcementIcon}>⚡</div>
+              <div style={styles.announcementIcon}><HiBolt /></div>
               <div>
                 <div style={styles.announcementTitle}>Faster Response Times</div>
                 <div style={styles.announcementText}>Average resolution time reduced to 5 days</div>
@@ -183,14 +202,14 @@ export default function CitizenHome() {
             <h3 style={styles.helpTitle}>Need Assistance?</h3>
             <div style={styles.helpContent}>
               <div style={styles.helpItem}>
-                <span style={styles.helpIcon}>📞</span>
+                <span style={styles.helpIcon}><HiPhone /></span>
                 <div>
                   <div style={styles.helpLabel}>Helpline</div>
                   <div style={styles.helpValue}>1800-XXX-XXXX</div>
                 </div>
               </div>
               <div style={styles.helpItem}>
-                <span style={styles.helpIcon}>✉️</span>
+                <span style={styles.helpIcon}><HiEnvelope /></span>
                 <div>
                   <div style={styles.helpLabel}>Email Support</div>
                   <div style={styles.helpValue}>support@civicresolve.gov.in</div>

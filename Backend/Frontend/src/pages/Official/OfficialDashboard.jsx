@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { HiChartBar, HiClipboardDocumentList } from 'react-icons/hi2';
 
 export default function OfficialDashboard() {
   const { user } = useAuth();
@@ -71,7 +72,7 @@ export default function OfficialDashboard() {
       <div style={styles.header}>
         <h2>Officer Dashboard</h2>
         <Link to="/official/analytics">
-          <button style={styles.secondaryBtn}>📊 View Analytics</button>
+          <button style={styles.secondaryBtn}><HiChartBar style={{display: 'inline', marginRight: '4px'}} />View Analytics</button>
         </Link>
       </div>
 
@@ -96,7 +97,7 @@ export default function OfficialDashboard() {
       </div>
 
       {/* Category View */}
-      <h3 style={styles.sectionTitle}>📋 Pending by Category</h3>
+      <h3 style={styles.sectionTitle}><HiClipboardDocumentList style={{display: 'inline', marginRight: '8px'}} />Pending by Category</h3>
       <div style={styles.list}>
         {pendingByCategoryComplaints.length > 0 ? (
           pendingByCategoryComplaints.map(complaint => (

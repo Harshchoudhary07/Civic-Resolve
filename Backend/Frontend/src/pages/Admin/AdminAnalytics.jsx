@@ -1,4 +1,5 @@
 import React from "react";
+import { HiChartBar } from 'react-icons/hi2';
 
 export default function AdminAnalytics() {
   return (
@@ -7,7 +8,7 @@ export default function AdminAnalytics() {
         <h2>Reports & Analytics</h2>
         <div style={styles.actions}>
           <button style={styles.btn}>📥 Export PDF</button>
-          <button style={styles.btn}>📊 Export Excel</button>
+          <button style={styles.btn}><HiChartBar style={{display: 'inline', marginRight: '4px'}} />Export Excel</button>
         </div>
       </div>
 
