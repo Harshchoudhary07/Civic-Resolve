@@ -2,6 +2,29 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const cloudinary = require('cloudinary').v2;
 
+// @desc    Get user profile
+// @route   GET /api/users/profile
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      mobileNumber: user.mobileNumber,
+      profilePicture: user.profilePicture,
+      department: user.department,
+      aadhar: user.aadhar,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
@@ -64,4 +87,4 @@ const updateUserProfilePicture = asyncHandler(async (req, res) => {
   res.json({ message: 'Profile picture updated successfully', profilePicture: result.secure_url });
 });
 
-module.exports = { updateUserProfile, updateUserProfilePicture };
+module.exports = { getUserProfile, updateUserProfile, updateUserProfilePicture };
