@@ -80,7 +80,24 @@ const complaintSchema = new mongoose.Schema({
     official: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     text: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
-  }]
+  }],
+  upvoteCount: {
+    type: Number,
+    default: 0
+  },
+  commentCount: {
+    type: Number,
+    default: 0
+  },
+  priorityScore: {
+    type: Number,
+    default: 0,
+    index: true
+  },
+  isArchived: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true
 });
@@ -88,5 +105,6 @@ const complaintSchema = new mongoose.Schema({
 // Indexes for dashboard performance
 complaintSchema.index({ user: 1, currentStatus: 1 });
 complaintSchema.index({ category: 1 });
+complaintSchema.index({ priorityScore: -1, createdAt: -1 }); // Index for feed sorting
 
 module.exports = mongoose.model('Complaint', complaintSchema);

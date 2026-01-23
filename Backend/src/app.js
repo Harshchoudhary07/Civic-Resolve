@@ -13,6 +13,7 @@ const citizenRoutes = require('./routes/citizenRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const feedRoutes = require('./routes/feedRoutes');
 
 const app = express();
 const cloudinary = require('cloudinary').v2;
@@ -58,6 +59,7 @@ app.use('/api/citizen', citizenRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/feed', feedRoutes);
 
 // Health Check
 app.get('/api', (req, res) => {

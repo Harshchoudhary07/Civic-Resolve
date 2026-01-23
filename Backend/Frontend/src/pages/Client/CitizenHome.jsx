@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import FeedCard from '../../components/FeedCard';
 
 export default function CitizenHome() {
   const { user } = useAuth();
   const [stats, setStats] = useState({ total: 0, open: 0, inProgress: 0, resolved: 0 });
-  const [recentComplaints, setRecentComplaints] = useState([]);
+  const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,13 +16,13 @@ export default function CitizenHome() {
   const fetchDashboardData = async () => {
     try {
       const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
-      const [statsRes, recentRes] = await Promise.all([
+      const [statsRes, feedRes] = await Promise.all([
         fetch('/api/citizen/dashboard', { headers }),
-        fetch('/api/citizen/complaints/recent', { headers })
+        fetch('/api/feed?limit=20', { headers })
       ]);
 
       const statsData = await statsRes.json();
-      const recentData = await recentRes.json();
+      const feedData = await feedRes.json();
 
       if (statsData.success) {
         setStats({
@@ -31,8 +32,8 @@ export default function CitizenHome() {
           resolved: statsData.summary.resolved || 0
         });
       }
-      if (recentData.success) {
-        setRecentComplaints(recentData.complaints.slice(0, 5));
+      if (feedData) { // Assuming feed API returns array directly
+        setFeed(feedData);
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
@@ -48,462 +49,402 @@ export default function CitizenHome() {
     return 'Good Evening';
   };
 
+  const handleUpvote = async (complaintId) => {
+    try {
+      const res = await fetch(`/api/feed/${complaintId}/upvote`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      const data = await res.json();
+
+      // Update local state
+      setFeed(prevFeed => prevFeed.map(item =>
+        item._id === complaintId
+          ? { ...item, upvoteCount: data.upvoteCount }
+          : item
+      ));
+    } catch (error) {
+      console.error('Failed to upvote', error);
+    }
+  };
+
   return (
     <div style={styles.container}>
-      {/* Welcome Header */}
-      <div style={styles.welcomeSection}>
-        <div>
-          <h1 style={styles.greeting}>{getGreeting()}, {user?.name || 'Citizen'}! 👋</h1>
-          <p style={styles.welcomeText}>Track your complaints and stay updated on resolutions</p>
-        </div>
-        <Link to="/citizen/file-complaint" style={styles.primaryButton}>
-          <span style={styles.buttonIcon}>📝</span>
-          File New Complaint
-        </Link>
-      </div>
+      <div style={styles.layoutGrid}>
 
-      {/* Statistics Cards */}
-      <div style={styles.statsGrid}>
-        <div style={{ ...styles.statCard, ...styles.statCardTotal }}>
-          <div style={styles.statIcon}>📊</div>
-          <div style={styles.statContent}>
-            <div style={styles.statValue}>{loading ? '...' : stats.total}</div>
-            <div style={styles.statLabel}>Total Complaints</div>
+        {/* Left Column: Feed */}
+        <div style={styles.mainColumn}>
+          <div style={styles.feedHeader}>
+            <h2 style={styles.pageTitle}>Community Feed</h2>
+            <div style={styles.feedFilters}>
+              <button style={styles.activeFilter}>🔥 Priority</button>
+              <button style={styles.inactiveFilter}>✨ Newest</button>
+            </div>
           </div>
-        </div>
-        <div style={{ ...styles.statCard, ...styles.statCardOpen }}>
-          <div style={styles.statIcon}>🔴</div>
-          <div style={styles.statContent}>
-            <div style={styles.statValue}>{loading ? '...' : stats.open}</div>
-            <div style={styles.statLabel}>Open</div>
-          </div>
-        </div>
-        <div style={{ ...styles.statCard, ...styles.statCardProgress }}>
-          <div style={styles.statIcon}>🔵</div>
-          <div style={styles.statContent}>
-            <div style={styles.statValue}>{loading ? '...' : stats.inProgress}</div>
-            <div style={styles.statLabel}>In Progress</div>
-          </div>
-        </div>
-        <div style={{ ...styles.statCard, ...styles.statCardResolved }}>
-          <div style={styles.statIcon}>✅</div>
-          <div style={styles.statContent}>
-            <div style={styles.statValue}>{loading ? '...' : stats.resolved}</div>
-            <div style={styles.statLabel}>Resolved</div>
-          </div>
-        </div>
-      </div>
 
-      {/* Quick Actions */}
-      <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>Quick Actions</h2>
-        <div style={styles.quickActionsGrid}>
-          <Link to="/citizen/file-complaint" style={styles.actionCard}>
-            <div style={styles.actionIcon}>📝</div>
-            <div style={styles.actionTitle}>File Complaint</div>
-            <div style={styles.actionDesc}>Report a new issue</div>
-          </Link>
-          <Link to="/citizen/my-complaints" style={styles.actionCard}>
-            <div style={styles.actionIcon}>📋</div>
-            <div style={styles.actionTitle}>My Complaints</div>
-            <div style={styles.actionDesc}>View all complaints</div>
-          </Link>
-          <Link to="/citizen/profile" style={styles.actionCard}>
-            <div style={styles.actionIcon}>👤</div>
-            <div style={styles.actionTitle}>Profile</div>
-            <div style={styles.actionDesc}>Update your details</div>
-          </Link>
-          <a href="#help" style={styles.actionCard}>
-            <div style={styles.actionIcon}>❓</div>
-            <div style={styles.actionTitle}>Help & FAQ</div>
-            <div style={styles.actionDesc}>Get assistance</div>
-          </a>
-        </div>
-      </div>
-
-      <div style={styles.twoColumnGrid}>
-        {/* Recent Complaints */}
-        <div style={styles.section}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Recent Complaints</h2>
-            <Link to="/citizen/my-complaints" style={styles.viewAllLink}>View All →</Link>
+          <div style={styles.createPostCard}>
+            <div style={styles.createPostHeader}>
+              <div style={styles.userAvatarPlaceholder}>{user?.name?.charAt(0) || 'U'}</div>
+              <Link to="/citizen/file-complaint" style={styles.fakeInput}>
+                What issue are you facing today, {user?.name?.split(' ')[0]}?
+              </Link>
+            </div>
+            <div style={styles.createPostActions}>
+              <Link to="/citizen/file-complaint" style={styles.createAction}>📷 Photo</Link>
+              <Link to="/citizen/file-complaint" style={styles.createAction}>📍 Location</Link>
+            </div>
           </div>
-          <div style={styles.recentList}>
+
+          <div style={styles.feedList}>
             {loading ? (
-              <div style={styles.loadingText}>Loading...</div>
-            ) : recentComplaints.length === 0 ? (
+              <div style={styles.loadingContainer}>
+                <div style={styles.spinner}></div>
+                <p>Loading your neighborhood updates...</p>
+              </div>
+            ) : feed.length === 0 ? (
               <div style={styles.emptyState}>
-                <div style={styles.emptyIcon}>📭</div>
-                <div style={styles.emptyTitle}>No complaints yet</div>
-                <div style={styles.emptyText}>File your first complaint to get started</div>
-                <Link to="/citizen/file-complaint" style={styles.emptyButton}>
-                  File Complaint
+                <div style={styles.emptyIcon}>🌍</div>
+                <div style={styles.emptyTitle}>Your feed is empty</div>
+                <div style={styles.emptyText}>Be the first to create a post for your community!</div>
+                <Link to="/citizen/file-complaint" style={styles.primaryButton}>
+                  Start a Topic
                 </Link>
               </div>
             ) : (
-              recentComplaints.map((complaint) => (
-                <Link key={complaint._id} to={`/citizen/complaint/${complaint._id}`} style={styles.recentItem}>
-                  <div style={styles.recentItemHeader}>
-                    <span style={styles.recentItemTitle}>{complaint.title}</span>
-                    <span style={getStatusStyle(complaint.currentStatus)}>{complaint.currentStatus}</span>
-                  </div>
-                  <div style={styles.recentItemMeta}>
-                    <span>📂 {complaint.category}</span>
-                    <span>📅 {new Date(complaint.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </Link>
+              feed.map((complaint) => (
+                <FeedCard
+                  key={complaint._id}
+                  complaint={complaint}
+                  onUpvote={handleUpvote}
+                />
               ))
             )}
           </div>
         </div>
 
-        {/* Announcements & Resources */}
-        <div style={styles.section}>
-          <h2 style={styles.sectionTitle}>📢 Announcements</h2>
-          <div style={styles.announcementList}>
-            <div style={styles.announcementItem}>
-              <div style={styles.announcementIcon}>🎉</div>
+        {/* Right Column: Sidebar */}
+        <div style={styles.sidebarColumn}>
+
+          {/* User Profile Card */}
+          <div style={styles.sidebarCard}>
+            <div style={styles.miniProfile}>
+              <div style={styles.miniAvatar}>{user?.name?.charAt(0)}</div>
               <div>
-                <div style={styles.announcementTitle}>New Feature: Live Evidence Upload</div>
-                <div style={styles.announcementText}>You can now capture photos and videos directly while filing complaints</div>
-                <div style={styles.announcementDate}>2 days ago</div>
+                <div style={styles.miniName}>{user?.name}</div>
+                <div style={styles.miniRole}>Citizen</div>
               </div>
             </div>
-            <div style={styles.announcementItem}>
-              <div style={styles.announcementIcon}>⚡</div>
-              <div>
-                <div style={styles.announcementTitle}>Faster Response Times</div>
-                <div style={styles.announcementText}>Average resolution time reduced to 5 days</div>
-                <div style={styles.announcementDate}>1 week ago</div>
+            <div style={styles.miniStatsRow}>
+              <div style={styles.miniStat}>
+                <span style={styles.miniStatValue}>{stats.total}</span>
+                <span style={styles.miniStatLabel}>Posts</span>
               </div>
+              <div style={styles.miniStat}>
+                <span style={styles.miniStatValue}>{stats.resolved}</span>
+                <span style={styles.miniStatLabel}>Resolved</span>
+              </div>
+            </div>
+            <Link to="/citizen/profile" style={styles.outlinedButton}>View Profile</Link>
+          </div>
+
+          {/* Quick Actions */}
+          <div style={styles.sidebarCard}>
+            <h3 style={styles.sidebarTitle}>Quick Actions</h3>
+            <div style={styles.sidebarLinks}>
+              <Link to="/citizen/file-complaint" style={styles.sidebarLink}>
+                <span>📝</span> File New Complaint
+              </Link>
+              <Link to="/citizen/my-complaints" style={styles.sidebarLink}>
+                <span>📋</span> My History
+              </Link>
+              <a href="#help" style={styles.sidebarLink}>
+                <span>❓</span> Help Center
+              </a>
             </div>
           </div>
 
-          <div style={styles.helpSection}>
-            <h3 style={styles.helpTitle}>Need Assistance?</h3>
-            <div style={styles.helpContent}>
-              <div style={styles.helpItem}>
-                <span style={styles.helpIcon}>📞</span>
-                <div>
-                  <div style={styles.helpLabel}>Helpline</div>
-                  <div style={styles.helpValue}>1800-XXX-XXXX</div>
-                </div>
-              </div>
-              <div style={styles.helpItem}>
-                <span style={styles.helpIcon}>✉️</span>
-                <div>
-                  <div style={styles.helpLabel}>Email Support</div>
-                  <div style={styles.helpValue}>support@civicresolve.gov.in</div>
-                </div>
-              </div>
+          {/* Announcements */}
+          <div style={styles.sidebarCard}>
+            <h3 style={styles.sidebarTitle}>📢 Announcements</h3>
+            <div style={styles.miniAnnouncement}>
+              <div style={styles.miniAnnounceTitle}>Live Evidence Upload</div>
+              <div style={styles.miniAnnounceText}>Capture photos directly in app.</div>
+            </div>
+            <div style={styles.miniAnnouncement}>
+              <div style={styles.miniAnnounceTitle}>Faster Resolutions</div>
+              <div style={styles.miniAnnounceText}>Avg time down to 5 days.</div>
             </div>
           </div>
+
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
-const getStatusStyle = (status) => ({
-  padding: "4px 10px",
-  borderRadius: "12px",
-  fontSize: "11px",
-  fontWeight: "600",
-  background:
-    status === "Resolved" ? "#dcfce7" :
-      status === "In Progress" ? "#dbeafe" :
-        status === "Pending" ? "#fef3c7" : "#fee2e2",
-  color:
-    status === "Resolved" ? "#166534" :
-      status === "In Progress" ? "#1e40af" :
-        status === "Pending" ? "#b45309" : "#991b1b",
-});
-
 const styles = {
   container: {
-    maxWidth: "1400px",
+    maxWidth: "1100px",
     margin: "0 auto",
-    padding: "24px"
+    padding: "20px",
+    minHeight: "100vh"
   },
-  welcomeSection: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "32px",
-    flexWrap: "wrap",
-    gap: "20px"
-  },
-  greeting: {
-    fontSize: "32px",
-    fontWeight: "700",
-    color: "var(--text)",
-    margin: "0 0 8px 0"
-  },
-  welcomeText: {
-    color: "var(--muted)",
-    fontSize: "16px",
-    margin: 0
-  },
-  primaryButton: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "12px 24px",
-    background: "var(--primary)",
-    color: "white",
-    borderRadius: "8px",
-    textDecoration: "none",
-    fontWeight: "600",
-    fontSize: "15px",
-    transition: "all 0.2s ease"
-  },
-  buttonIcon: {
-    fontSize: "18px"
-  },
-  statsGrid: {
+  layoutGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: "20px",
-    marginBottom: "40px"
-  },
-  statCard: {
-    background: "var(--card)",
-    border: "1px solid var(--border)",
-    borderRadius: "12px",
-    padding: "24px",
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    boxShadow: "var(--shadow-sm)",
-    transition: "transform 0.2s ease"
-  },
-  statCardTotal: {
-    borderLeft: "4px solid var(--primary)"
-  },
-  statCardOpen: {
-    borderLeft: "4px solid #f97316"
-  },
-  statCardProgress: {
-    borderLeft: "4px solid #3b82f6"
-  },
-  statCardResolved: {
-    borderLeft: "4px solid #22c55e"
-  },
-  statIcon: {
-    fontSize: "36px",
-    lineHeight: 1
-  },
-  statContent: {
-    flex: 1
-  },
-  statValue: {
-    fontSize: "32px",
-    fontWeight: "700",
-    color: "var(--text)",
-    lineHeight: 1,
-    marginBottom: "4px"
-  },
-  statLabel: {
-    fontSize: "14px",
-    color: "var(--muted)",
-    fontWeight: "500"
-  },
-  section: {
-    marginBottom: "40px"
-  },
-  sectionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "20px"
-  },
-  sectionTitle: {
-    fontSize: "20px",
-    fontWeight: "600",
-    color: "var(--text)",
-    margin: "0 0 20px 0"
-  },
-  viewAllLink: {
-    color: "var(--primary)",
-    textDecoration: "none",
-    fontSize: "14px",
-    fontWeight: "500"
-  },
-  quickActionsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "16px"
-  },
-  actionCard: {
-    background: "var(--card)",
-    border: "1px solid var(--border)",
-    borderRadius: "12px",
-    padding: "24px",
-    textAlign: "center",
-    textDecoration: "none",
-    color: "inherit",
-    transition: "all 0.2s ease",
-    cursor: "pointer"
-  },
-  actionIcon: {
-    fontSize: "40px",
-    marginBottom: "12px"
-  },
-  actionTitle: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "var(--text)",
-    marginBottom: "4px"
-  },
-  actionDesc: {
-    fontSize: "13px",
-    color: "var(--muted)"
-  },
-  twoColumnGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "32px",
-    "@media (max-width: 1024px)": {
+    gridTemplateColumns: "1fr 300px", // Main content + Sidebar
+    gap: "24px",
+    "@media (max-width: 800px)": { // Simple responsive check (conceptual)
       gridTemplateColumns: "1fr"
     }
   },
-  recentList: {
+  mainColumn: {
     display: "flex",
     flexDirection: "column",
-    gap: "12px"
+    gap: "20px"
   },
-  recentItem: {
-    background: "var(--card)",
-    border: "1px solid var(--border)",
-    borderRadius: "10px",
-    padding: "16px",
-    textDecoration: "none",
-    color: "inherit",
-    transition: "all 0.2s ease"
+  sidebarColumn: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px"
   },
-  recentItemHeader: {
+
+  // Feed Header
+  feedHeader: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "8px",
-    gap: "12px"
+    alignItems: "center"
   },
-  recentItemTitle: {
-    fontSize: "15px",
-    fontWeight: "600",
+  pageTitle: {
+    fontSize: "22px",
+    fontWeight: "700",
     color: "var(--text)",
-    flex: 1
+    margin: 0
   },
-  recentItemMeta: {
+  feedFilters: {
     display: "flex",
-    gap: "16px",
+    gap: "8px",
+    background: "var(--card)",
+    padding: "4px",
+    borderRadius: "8px",
+    border: "1px solid var(--border)"
+  },
+  activeFilter: {
+    background: "var(--bg-secondary)",
+    border: "none",
+    padding: "6px 12px",
+    borderRadius: "6px",
     fontSize: "13px",
-    color: "var(--muted)"
+    fontWeight: "600",
+    color: "var(--primary)",
+    cursor: "pointer"
   },
-  loadingText: {
-    textAlign: "center",
+  inactiveFilter: {
+    background: "transparent",
+    border: "none",
+    padding: "6px 12px",
+    borderRadius: "6px",
+    fontSize: "13px",
     color: "var(--muted)",
-    padding: "40px"
+    cursor: "pointer"
   },
-  emptyState: {
-    textAlign: "center",
-    padding: "40px 20px",
+
+  // Create Post Input (Visual only)
+  createPostCard: {
     background: "var(--card)",
     border: "1px solid var(--border)",
-    borderRadius: "12px"
+    borderRadius: "12px",
+    padding: "16px",
+    boxShadow: "var(--shadow-sm)"
   },
-  emptyIcon: {
-    fontSize: "64px",
-    marginBottom: "16px"
+  createPostHeader: {
+    display: "flex",
+    gap: "12px",
+    marginBottom: "16px",
+    alignItems: "center"
   },
-  emptyTitle: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "var(--text)",
-    marginBottom: "8px"
+  userAvatarPlaceholder: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    background: "var(--primary)",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "600"
   },
-  emptyText: {
-    fontSize: "14px",
+  fakeInput: {
+    flex: 1,
+    background: "var(--bg-secondary)",
+    padding: "10px 16px",
+    borderRadius: "20px",
     color: "var(--muted)",
-    marginBottom: "20px"
+    textDecoration: "none",
+    fontSize: "14px",
+    cursor: "text"
   },
-  emptyButton: {
+  createPostActions: {
+    display: "flex",
+    gap: "20px",
+    paddingTop: "12px",
+    borderTop: "1px solid var(--border)"
+  },
+  createAction: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    fontSize: "13px",
+    fontWeight: "500",
+    color: "var(--muted)",
+    textDecoration: "none"
+  },
+
+  // Feed List
+  feedList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px"
+  },
+  loadingContainer: {
+    textAlign: "center",
+    padding: "40px",
+    color: "var(--muted)"
+  },
+  emptyState: {
+    background: "var(--card)",
+    borderRadius: "12px",
+    padding: "40px",
+    textAlign: "center",
+    border: "1px solid var(--border)"
+  },
+  emptyIcon: { fontSize: "48px", marginBottom: "16px" },
+  emptyTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "8px" },
+  emptyText: { color: "var(--muted)", marginBottom: "20px" },
+  primaryButton: {
     display: "inline-block",
     padding: "10px 20px",
     background: "var(--primary)",
     color: "white",
     borderRadius: "8px",
     textDecoration: "none",
-    fontWeight: "500",
+    fontWeight: "600",
     fontSize: "14px"
   },
-  announcementList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    marginBottom: "24px"
-  },
-  announcementItem: {
+
+  // Sidebar Components
+  sidebarCard: {
     background: "var(--card)",
     border: "1px solid var(--border)",
-    borderRadius: "10px",
-    padding: "16px",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "var(--shadow-sm)"
+  },
+  miniProfile: {
     display: "flex",
-    gap: "12px"
+    alignItems: "center",
+    gap: "12px",
+    marginBottom: "20px"
   },
-  announcementIcon: {
-    fontSize: "24px",
-    lineHeight: 1
+  miniAvatar: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, var(--primary), #3b82f6)",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "700",
+    fontSize: "18px"
   },
-  announcementTitle: {
+  miniName: {
+    fontWeight: "700",
+    color: "var(--text)",
+    fontSize: "16px"
+  },
+  miniRole: {
+    fontSize: "12px",
+    color: "var(--muted)",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
+  },
+  miniStatsRow: {
+    display: "flex",
+    borderTop: "1px solid var(--border)",
+    borderBottom: "1px solid var(--border)",
+    padding: "12px 0",
+    marginBottom: "16px"
+  },
+  miniStat: {
+    flex: 1,
+    textAlign: "center",
+    borderRight: "1px solid var(--border)",
+    "&:last-child": { borderRight: "none" }
+  },
+  miniStatValue: {
+    display: "block",
+    fontSize: "18px",
+    fontWeight: "700",
+    color: "var(--text)"
+  },
+  miniStatLabel: {
+    fontSize: "11px",
+    color: "var(--muted)",
+    textTransform: "uppercase"
+  },
+  outlinedButton: {
+    display: "block",
+    width: "100%",
+    padding: "8px",
+    textAlign: "center",
+    border: "1px solid var(--border)",
+    borderRadius: "8px",
+    color: "var(--text)",
+    textDecoration: "none",
+    fontSize: "13px",
+    fontWeight: "500",
+    transition: "background 0.2s"
+  },
+  sidebarTitle: {
+    fontSize: "15px",
+    fontWeight: "700",
+    marginBottom: "16px",
+    color: "var(--text)"
+  },
+  sidebarLinks: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px"
+  },
+  sidebarLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    padding: "10px",
+    borderRadius: "8px",
+    color: "var(--text)",
+    textDecoration: "none",
     fontSize: "14px",
+    fontWeight: "500",
+    transition: "background 0.2s",
+    ":hover": { background: "var(--bg-secondary)" }
+  },
+  miniAnnouncement: {
+    padding: "12px",
+    background: "var(--bg-secondary)",
+    borderRadius: "8px",
+    marginBottom: "12px",
+    "&:last-child": { marginBottom: 0 }
+  },
+  miniAnnounceTitle: {
+    fontSize: "13px",
     fontWeight: "600",
     color: "var(--text)",
     marginBottom: "4px"
   },
-  announcementText: {
-    fontSize: "13px",
-    color: "var(--muted)",
-    marginBottom: "6px",
-    lineHeight: "1.5"
-  },
-  announcementDate: {
+  miniAnnounceText: {
     fontSize: "12px",
     color: "var(--muted)",
-    opacity: 0.7
-  },
-  helpSection: {
-    background: "linear-gradient(135deg, var(--primary), var(--gov-blue-dark))",
-    color: "white",
-    padding: "24px",
-    borderRadius: "12px"
-  },
-  helpTitle: {
-    fontSize: "16px",
-    fontWeight: "600",
-    margin: "0 0 16px 0"
-  },
-  helpContent: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  },
-  helpItem: {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start"
-  },
-  helpIcon: {
-    fontSize: "24px",
-    lineHeight: 1
-  },
-  helpLabel: {
-    fontSize: "12px",
-    opacity: 0.9,
-    marginBottom: "2px"
-  },
-  helpValue: {
-    fontSize: "14px",
-    fontWeight: "600"
+    lineHeight: "1.4"
   }
 };
