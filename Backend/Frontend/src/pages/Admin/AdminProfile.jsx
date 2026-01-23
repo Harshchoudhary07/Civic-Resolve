@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { HiCamera } from 'react-icons/hi2';
 
 const AdminProfile = () => {
   const { user, updateUserContext } = useAuth();
@@ -95,7 +96,7 @@ const AdminProfile = () => {
               alt="Profile"
               style={styles.avatar}
             />
-            <div style={styles.avatarOverlay} className="avatar-overlay">📷</div>
+            <div style={styles.avatarOverlay} className="avatar-overlay"><HiCamera /></div>
             <input
               type="file"
               ref={fileInputRef}

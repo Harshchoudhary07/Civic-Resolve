@@ -44,13 +44,13 @@ export default function Landing() {
           {/* Primary CTA */}
           <div style={styles.ctaGroup}>
             <Link to="/citizen/login" style={{ textDecoration: 'none' }}>
-              <button style={styles.primaryCta}>
+              <button className="btn-gradient-cta" style={styles.primaryCta}>
                 <HiRocketLaunch style={{ display: 'inline', marginRight: '8px' }} />
                 Get Started as Citizen
               </button>
             </Link>
             <Link to="/citizen/register" style={{ textDecoration: 'none' }}>
-              <button style={styles.secondaryCta}>
+              <button className="btn-gradient-secondary" style={styles.secondaryCta}>
                 Register New Account
               </button>
             </Link>

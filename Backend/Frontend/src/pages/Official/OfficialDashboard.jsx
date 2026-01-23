@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { HiChartBar, HiClipboardDocumentList } from 'react-icons/hi2';
+import { HiChartBar, HiClipboardDocumentList, HiFire, HiFolder } from 'react-icons/hi2';
 
 export default function OfficialDashboard() {
   const { user } = useAuth();
@@ -85,7 +85,7 @@ export default function OfficialDashboard() {
       </div>
 
       {/* Priority View */}
-      <h3 style={styles.sectionTitle}>🔥 High Priority / Urgent</h3>
+      <h3 style={styles.sectionTitle}><HiFire style={{display: 'inline', marginRight: '8px', color: '#ef4444'}} />High Priority / Urgent</h3>
       <div style={styles.list}>
         {highPriorityComplaints.length > 0 ? (
           highPriorityComplaints.map(complaint => (
@@ -127,7 +127,7 @@ const ComplaintCard = ({ id, title, category, priority, status }) => (
       </div>
       <h4>{title}</h4>
       <div style={styles.meta}>
-        <span>📂 {category}</span>
+        <span><HiFolder style={{display: 'inline', marginRight: '4px'}} />{category}</span>
         <span style={styles.status}>{status}</span>
       </div>
     </div>

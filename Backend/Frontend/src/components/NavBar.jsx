@@ -29,7 +29,7 @@ export const NavBar = () => {
         {user ? (
           <>
             {user.role === 'citizen' && (
-              <button onClick={() => navigate("/citizen/file-complaint")} style={styles.fileBtn}>
+              <button onClick={() => navigate("/citizen/file-complaint")} className="btn-gradient-cta" style={styles.fileBtn}>
                 <HiDocumentText style={{display: 'inline', marginRight: '4px'}} />File Complaint
               </button>
             )}
@@ -40,10 +40,10 @@ export const NavBar = () => {
                 style={styles.profileImage}
               />
             </div>
-            <button onClick={() => logout()} style={styles.logoutBtn}>Logout</button>
+            <button onClick={() => logout()} className="btn-gradient-ghost" style={styles.logoutBtn}>Logout</button>
           </>
         ) : (
-          <button onClick={() => navigate("/citizen/login")} style={styles.loginBtn}>Login</button>
+          <button onClick={() => navigate("/citizen/login")} className="btn-gradient-primary" style={styles.loginBtn}>Login</button>
         )}
 
         {user && (user.role === 'admin' || user.role === 'official') && (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { HiMapPin, HiCalendar, HiFolder } from 'react-icons/hi2';
 
 export default function ComplaintDetails() {
   const { id } = useParams();
@@ -53,9 +54,9 @@ export default function ComplaintDetails() {
         <h3>{complaint.title}</h3>
         <p style={styles.desc}>{complaint.description}</p>
         <div style={styles.meta}>
-          <span>📍 {complaint.location.address}</span>
-          <span>📅 {new Date(complaint.createdAt).toLocaleDateString()}</span>
-          <span>📂 {complaint.category}</span>
+          <span><HiMapPin style={{display: 'inline', marginRight: '4px'}} />{complaint.location.address}</span>
+          <span><HiCalendar style={{display: 'inline', marginRight: '4px'}} />{new Date(complaint.createdAt).toLocaleDateString()}</span>
+          <span><HiFolder style={{display: 'inline', marginRight: '4px'}} />{complaint.category}</span>
         </div>
         {complaint.attachments && complaint.attachments.length > 0 ? (
           <div style={styles.attachmentsGrid}>

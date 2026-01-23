@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { HiHandThumbUp, HiChatBubbleLeftRight } from 'react-icons/hi2';
 
 export default function FeedCard({ complaint, onUpvote }) {
     const [showComments, setShowComments] = useState(false);
@@ -97,12 +98,12 @@ export default function FeedCard({ complaint, onUpvote }) {
 
             {/* Actions */}
             <div style={styles.actions}>
-                <button onClick={handleUpvoteClick} style={styles.actionButton}>
-                    <span>👍</span>
+                <button onClick={handleUpvoteClick} className="btn-gradient-ghost" style={styles.actionButton}>
+                    <span><HiHandThumbUp /></span>
                     <span>{complaint.upvoteCount} Upvotes</span>
                 </button>
-                <button onClick={fetchComments} style={styles.actionButton}>
-                    <span>💬</span>
+                <button onClick={fetchComments} className="btn-gradient-ghost" style={styles.actionButton}>
+                    <span><HiChatBubbleLeftRight /></span>
                     <span>{commentCount} Comments</span>
                 </button>
             </div>
@@ -118,7 +119,7 @@ export default function FeedCard({ complaint, onUpvote }) {
                             placeholder="Write a comment..."
                             style={styles.commentInput}
                         />
-                        <button type="submit" style={styles.commentButton} disabled={!newComment.trim()}>
+                        <button type="submit" className="btn-gradient-primary" style={styles.commentButton} disabled={!newComment.trim()}>
                             Post
                         </button>
                     </form>

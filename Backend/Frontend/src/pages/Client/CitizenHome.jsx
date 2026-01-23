@@ -19,7 +19,11 @@ import {
   HiEnvelope,
   HiMegaphone,
   HiSparkles,
-  HiBolt
+  HiBolt,
+  HiFire,
+  HiCamera,
+  HiMapPin as HiLocationMarker,
+  HiGlobeAlt
 } from 'react-icons/hi2';
 
 export default function CitizenHome() {
@@ -96,8 +100,8 @@ export default function CitizenHome() {
           <div style={styles.feedHeader}>
             <h2 style={styles.pageTitle}>Community Feed</h2>
             <div style={styles.feedFilters}>
-              <button style={styles.activeFilter}>🔥 Priority</button>
-              <button style={styles.inactiveFilter}>✨ Newest</button>
+              <button style={styles.activeFilter}><HiFire style={{display: 'inline', marginRight: '4px'}} />Priority</button>
+              <button style={styles.inactiveFilter}><HiSparkles style={{display: 'inline', marginRight: '4px'}} />Newest</button>
             </div>
           </div>
 
@@ -109,8 +113,8 @@ export default function CitizenHome() {
               </Link>
             </div>
             <div style={styles.createPostActions}>
-              <Link to="/citizen/file-complaint" style={styles.createAction}>📷 Photo</Link>
-              <Link to="/citizen/file-complaint" style={styles.createAction}>📍 Location</Link>
+              <Link to="/citizen/file-complaint" style={styles.createAction}><HiCamera style={{display: 'inline', marginRight: '4px'}} />Photo</Link>
+              <Link to="/citizen/file-complaint" style={styles.createAction}><HiLocationMarker style={{display: 'inline', marginRight: '4px'}} />Location</Link>
             </div>
           </div>
 
@@ -122,10 +126,10 @@ export default function CitizenHome() {
               </div>
             ) : feed.length === 0 ? (
               <div style={styles.emptyState}>
-                <div style={styles.emptyIcon}>🌍</div>
+                <div style={styles.emptyIcon}><HiGlobeAlt /></div>
                 <div style={styles.emptyTitle}>Your feed is empty</div>
                 <div style={styles.emptyText}>Be the first to create a post for your community!</div>
-                <Link to="/citizen/file-complaint" style={styles.primaryButton}>
+                <Link to="/citizen/file-complaint" className="btn-gradient-primary" style={styles.primaryButton}>
                   Start a Topic
                 </Link>
               </div>
@@ -163,7 +167,7 @@ export default function CitizenHome() {
                 <span style={styles.miniStatLabel}>Resolved</span>
               </div>
             </div>
-            <Link to="/citizen/profile" style={styles.outlinedButton}>View Profile</Link>
+            <Link to="/citizen/profile" className="btn-gradient-secondary" style={styles.outlinedButton}>View Profile</Link>
           </div>
 
           {/* Quick Actions */}

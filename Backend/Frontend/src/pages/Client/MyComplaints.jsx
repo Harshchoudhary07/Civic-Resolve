@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { HiMagnifyingGlass, HiInboxArrowDown } from 'react-icons/hi2';
+import { HiMagnifyingGlass, HiInboxArrowDown, HiMapPin } from 'react-icons/hi2';
 
 export default function MyComplaints() {
   const [complaints, setComplaints] = useState([]);
@@ -66,7 +66,7 @@ export default function MyComplaints() {
           <h2 style={styles.title}>My Complaints</h2>
           <p style={styles.subtitle}>Track and manage all your submitted complaints</p>
         </div>
-        <Link to="/citizen/file-complaint" style={styles.newButton}>
+        <Link to="/citizen/file-complaint" className="btn-gradient-cta" style={styles.newButton}>
           <span style={styles.buttonIcon}>➕</span>
           New Complaint
         </Link>
@@ -140,7 +140,7 @@ export default function MyComplaints() {
                 : 'Try adjusting your search or filters'}
             </div>
             {complaints.length === 0 && (
-              <Link to="/citizen/file-complaint" style={styles.emptyButton}>
+              <Link to="/citizen/file-complaint" className="btn-gradient-primary" style={styles.emptyButton}>
                 File Your First Complaint
               </Link>
             )}
@@ -158,7 +158,7 @@ export default function MyComplaints() {
                   <div style={styles.listItemMeta}>
                     <span>📅 {new Date(c.createdAt).toLocaleDateString()}</span>
                     <span>📂 {c.category}</span>
-                    <span>📍 {c.location || 'No location'}</span>
+                    <span><HiMapPin style={{display: 'inline', marginRight: '4px'}} />{c.location || 'No location'}</span>
                   </div>
                 </div>
               ) : (
