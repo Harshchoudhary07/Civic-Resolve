@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { 
-  HiBuildingLibrary, 
-  HiLockClosed, 
-  HiPhone, 
-  HiEnvelope, 
-  HiClock, 
-  HiUsers 
+import {
+  HiBuildingLibrary,
+  HiLockClosed,
+  HiPhone,
+  HiEnvelope,
+  HiClock,
+  HiUsers
 } from 'react-icons/hi2';
 import { FaTwitter, FaFacebook, FaYoutube, FaInstagram } from 'react-icons/fa';
 
@@ -35,11 +35,11 @@ export const Footer = () => {
         <div style={styles.section}>
           <h4 style={styles.subHeading}>Quick Links</h4>
           <div style={styles.links}>
-            <Link to="/citizen/login" style={styles.link}>Citizen Portal</Link>
-            <Link to="/official/login" style={styles.link}>Official Portal</Link>
-            <Link to="/admin/login" style={styles.link}>Admin Portal</Link>
-            <a href="#about" style={styles.link}>About Us</a>
-            <a href="#faq" style={styles.link}>FAQ</a>
+            <Link to="/citizen/login" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Citizen Portal</Link>
+            <Link to="/official/login" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Official Portal</Link>
+            <Link to="/admin/login" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Admin Portal</Link>
+            <a href="#about" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>About Us</a>
+            <a href="#faq" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>FAQ</a>
           </div>
         </div>
 
@@ -81,10 +81,10 @@ export const Footer = () => {
             <a href="#instagram" style={styles.socialIcon} title="Instagram"><FaInstagram /></a>
           </div>
           <div style={styles.links}>
-            <a href="#accessibility" style={styles.link}>Accessibility Statement</a>
-            <a href="#privacy" style={styles.link}>Privacy Policy</a>
-            <a href="#terms" style={styles.link}>Terms of Service</a>
-            <a href="#sitemap" style={styles.link}>Sitemap</a>
+            <a href="#accessibility" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Accessibility Statement</a>
+            <a href="#privacy" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Privacy Policy</a>
+            <a href="#terms" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Terms of Service</a>
+            <a href="#sitemap" style={styles.link} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Sitemap</a>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ export const Footer = () => {
           <div style={styles.metadata}>
             <span style={styles.metaItem}>Last Updated: {new Date().toLocaleDateString('en-IN')}</span>
             <span style={styles.metaItem}>|</span>
-            <span style={styles.metaItem}><HiUsers style={{display: 'inline', marginRight: '4px'}} />Visitors: 1,234,567</span>
+            <span style={styles.metaItem}><HiUsers style={{ display: 'inline', marginRight: '4px' }} />Visitors: 1,234,567</span>
           </div>
         </div>
       </div>
