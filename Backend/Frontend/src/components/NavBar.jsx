@@ -6,6 +6,7 @@ import { HiDocumentText } from 'react-icons/hi2';
 export const NavBar = () => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -13,51 +14,72 @@ export const NavBar = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  const handleLogout = () => {
+    setShowLogoutModal(false);
+    logout();
+  };
+
   return (
-    <nav style={styles.nav}>
-      {/* Government Logo & App Name */}
-      <div style={styles.logoSection} onClick={() => navigate("/")}>
-        <div style={styles.emblem}>🏛️</div>
-        <div style={styles.logoText}>
-          <div style={styles.appName}>CivicResolve</div>
-          <div style={styles.tagline}>Complaint Portal</div>
+    <>
+      <nav style={styles.nav}>
+        {/* Government Logo & App Name */}
+        <div style={styles.logoSection} onClick={() => navigate("/")}>
+          <div style={styles.emblem}>🏛️</div>
+          <div style={styles.logoText}>
+            <div style={styles.appName}>CivicResolve</div>
+            <div style={styles.tagline}>Complaint Portal</div>
+          </div>
         </div>
-      </div>
 
-      {/* Navigation Buttons */}
-      <div style={styles.actions}>
-        {user ? (
-          <>
-            {user.role === 'citizen' && (
-              <button onClick={() => navigate("/citizen/file-complaint")} className="btn-gradient-cta" style={styles.fileBtn}>
-                <HiDocumentText style={{display: 'inline', marginRight: '4px'}} />File Complaint
-              </button>
-            )}
-            <div style={styles.profileContainer} onClick={() => navigate(`/${user.role}/profile`)}>
-              <img
-                src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name}&background=random`}
-                alt="Profile"
-                style={styles.profileImage}
-              />
+        {/* Navigation Buttons */}
+        <div style={styles.actions}>
+          {user ? (
+            <>
+              {user.role === 'citizen' && (
+                <button onClick={() => navigate("/citizen/file-complaint")} className="btn-gradient-cta" style={styles.fileBtn}>
+                  <HiDocumentText style={{ display: 'inline', marginRight: '4px', fontSize: '1.1em', verticalAlign: 'text-bottom' }} />File Complaint
+                </button>
+              )}
+              <div style={styles.profileContainer} onClick={() => navigate(`/${user.role}/profile`)}>
+                <img
+                  src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name}&background=random`}
+                  alt="Profile"
+                  style={styles.profileImage}
+                />
+              </div>
+              <button onClick={() => setShowLogoutModal(true)} className="btn-gradient-ghost" style={styles.logoutBtn}>Logout</button>
+            </>
+          ) : (
+            <button onClick={() => navigate("/citizen/login")} className="btn-gradient-primary" style={styles.loginBtn}>Login</button>
+          )}
+
+          {user && (user.role === 'admin' || user.role === 'official') && (
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              style={styles.themeToggle}
+              title="Toggle theme"
+            >
+              {theme === "dark" ? "🌙" : "☀️"}
+            </button>
+          )}
+
+        </div>
+      </nav>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <h3 style={styles.modalTitle}>Confirm Logout</h3>
+            <p style={styles.modalText}>Are you sure you want to log out of your account?</p>
+            <div style={styles.modalActions}>
+              <button onClick={() => setShowLogoutModal(false)} style={styles.cancelBtn}>Cancel</button>
+              <button onClick={handleLogout} style={styles.confirmBtn}>Logout</button>
             </div>
-            <button onClick={() => logout()} className="btn-gradient-ghost" style={styles.logoutBtn}>Logout</button>
-          </>
-        ) : (
-          <button onClick={() => navigate("/citizen/login")} className="btn-gradient-primary" style={styles.loginBtn}>Login</button>
-        )}
-
-        {user && (user.role === 'admin' || user.role === 'official') && (
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            style={styles.themeToggle}
-            title="Toggle theme"
-          >
-            {theme === "dark" ? "🌙" : "☀️"}
-          </button>
-        )}
-
-      </div>
-    </nav>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -69,11 +91,12 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     background: "var(--card)",
-    borderBottom: "2px solid var(--border)",
+    borderBottom: "1px solid var(--border)",
     position: "sticky",
     top: 0,
     zIndex: 100,
     boxShadow: "var(--shadow-sm)",
+    transition: "background 0.3s ease",
   },
 
   logoSection: {
@@ -134,6 +157,8 @@ const styles = {
     fontWeight: "600",
     boxShadow: "var(--shadow-sm)",
     transition: "all 0.2s ease",
+    display: "flex",
+    alignItems: "center",
   },
 
   logoutBtn: {
@@ -186,5 +211,71 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: "all 0.2s ease",
+  },
+
+  // Modal Styles
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "rgba(0,0,0,0.6)",
+    backdropFilter: "blur(4px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+    animation: "fadeIn 0.2s ease-out",
+  },
+  modal: {
+    background: "var(--card)",
+    padding: "24px",
+    borderRadius: "16px",
+    width: "90%",
+    maxWidth: "400px",
+    boxShadow: "var(--shadow-lg)",
+    border: "1px solid var(--border)",
+    animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+  },
+  modalTitle: {
+    margin: "0 0 12px 0",
+    fontSize: "1.25rem",
+    fontWeight: "700",
+    color: "var(--text)",
+  },
+  modalText: {
+    margin: "0 0 24px 0",
+    color: "var(--muted)",
+    fontSize: "0.95rem",
+    lineHeight: "1.5",
+  },
+  modalActions: {
+    display: "flex",
+    gap: "12px",
+    justifyContent: "flex-end",
+  },
+  cancelBtn: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--text)",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+    fontWeight: "500",
+    transition: "background 0.2s",
+  },
+  confirmBtn: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "none",
+    background: "var(--primary)",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    boxShadow: "var(--shadow-md)",
+    transition: "transform 0.1s",
   },
 };
