@@ -2,6 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import FeedCard from '../../components/FeedCard';
+import {
+  HiHandRaised,
+  HiDocumentText,
+  HiChartBar,
+  HiExclamationCircle,
+  HiClock,
+  HiCheckCircle,
+  HiClipboardDocumentList,
+  HiUser,
+  HiQuestionMarkCircle,
+  HiInboxArrowDown,
+  HiFolder,
+  HiCalendar,
+  HiPhone,
+  HiEnvelope,
+  HiMegaphone,
+  HiSparkles,
+  HiBolt
+} from 'react-icons/hi2';
 
 export default function CitizenHome() {
   const { user } = useAuth();
@@ -32,7 +51,7 @@ export default function CitizenHome() {
           resolved: statsData.summary.resolved || 0
         });
       }
-      if (feedData) { // Assuming feed API returns array directly
+      if (feedData) {
         setFeed(feedData);
       }
     } catch (error) {
@@ -152,27 +171,54 @@ export default function CitizenHome() {
             <h3 style={styles.sidebarTitle}>Quick Actions</h3>
             <div style={styles.sidebarLinks}>
               <Link to="/citizen/file-complaint" style={styles.sidebarLink}>
-                <span>📝</span> File New Complaint
+                <span style={styles.iconWrapper}><HiDocumentText /></span>
+                File New Complaint
               </Link>
               <Link to="/citizen/my-complaints" style={styles.sidebarLink}>
-                <span>📋</span> My History
+                <span style={styles.iconWrapper}><HiClipboardDocumentList /></span>
+                My History
               </Link>
               <a href="#help" style={styles.sidebarLink}>
-                <span>❓</span> Help Center
+                <span style={styles.iconWrapper}><HiQuestionMarkCircle /></span>
+                Help Center
               </a>
             </div>
           </div>
 
           {/* Announcements */}
           <div style={styles.sidebarCard}>
-            <h3 style={styles.sidebarTitle}>📢 Announcements</h3>
+            <h3 style={styles.sidebarTitle}>
+              <HiMegaphone style={{ display: 'inline', marginRight: '8px', color: 'var(--primary)' }} />
+              Announcements
+            </h3>
             <div style={styles.miniAnnouncement}>
-              <div style={styles.miniAnnounceTitle}>Live Evidence Upload</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <HiSparkles style={{ color: '#eab308' }} />
+                <div style={styles.miniAnnounceTitle}>Live Evidence Upload</div>
+              </div>
               <div style={styles.miniAnnounceText}>Capture photos directly in app.</div>
             </div>
             <div style={styles.miniAnnouncement}>
-              <div style={styles.miniAnnounceTitle}>Faster Resolutions</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <HiBolt style={{ color: '#3b82f6' }} />
+                <div style={styles.miniAnnounceTitle}>Faster Resolutions</div>
+              </div>
               <div style={styles.miniAnnounceText}>Avg time down to 5 days.</div>
+            </div>
+          </div>
+
+          {/* Help Section - Adapted from Incoming */}
+          <div style={styles.sidebarCard}>
+            <h3 style={styles.sidebarTitle}>Support</h3>
+            <div style={styles.sidebarLinks}>
+              <div style={styles.sidebarLink}>
+                <span style={styles.iconWrapper}><HiPhone /></span>
+                1800-XXX-XXXX
+              </div>
+              <div style={styles.sidebarLink}>
+                <span style={styles.iconWrapper}><HiEnvelope /></span>
+                support@civic.gov
+              </div>
             </div>
           </div>
 
@@ -191,9 +237,9 @@ const styles = {
   },
   layoutGrid: {
     display: "grid",
-    gridTemplateColumns: "1fr 300px", // Main content + Sidebar
+    gridTemplateColumns: "1fr 300px",
     gap: "24px",
-    "@media (max-width: 800px)": { // Simple responsive check (conceptual)
+    "@media (max-width: 800px)": {
       gridTemplateColumns: "1fr"
     }
   },
@@ -248,7 +294,7 @@ const styles = {
     cursor: "pointer"
   },
 
-  // Create Post Input (Visual only)
+  // Create Post Input
   createPostCard: {
     background: "var(--card)",
     border: "1px solid var(--border)",
@@ -409,7 +455,9 @@ const styles = {
     fontSize: "15px",
     fontWeight: "700",
     marginBottom: "16px",
-    color: "var(--text)"
+    color: "var(--text)",
+    display: 'flex',
+    alignItems: 'center'
   },
   sidebarLinks: {
     display: "flex",
@@ -419,7 +467,7 @@ const styles = {
   sidebarLink: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
+    gap: "12px",
     padding: "10px",
     borderRadius: "8px",
     color: "var(--text)",
@@ -428,6 +476,12 @@ const styles = {
     fontWeight: "500",
     transition: "background 0.2s",
     ":hover": { background: "var(--bg-secondary)" }
+  },
+  iconWrapper: {
+    fontSize: "18px",
+    display: "flex",
+    alignItems: "center",
+    color: "var(--primary)"
   },
   miniAnnouncement: {
     padding: "12px",
@@ -440,7 +494,7 @@ const styles = {
     fontSize: "13px",
     fontWeight: "600",
     color: "var(--text)",
-    marginBottom: "4px"
+    marginBottom: "0px"
   },
   miniAnnounceText: {
     fontSize: "12px",
