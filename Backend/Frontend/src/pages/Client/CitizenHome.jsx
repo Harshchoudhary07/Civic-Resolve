@@ -149,7 +149,7 @@ export default function CitizenHome() {
         <div style={styles.sidebarColumn}>
 
           {/* User Profile Card */}
-          <div style={styles.sidebarCard}>
+          <div className="card-gradient-hover" style={styles.sidebarCard}>
             <div style={styles.miniProfile}>
               <div style={styles.miniAvatar}>{user?.name?.charAt(0)}</div>
               <div>
@@ -171,7 +171,7 @@ export default function CitizenHome() {
           </div>
 
           {/* Quick Actions */}
-          <div style={styles.sidebarCard}>
+          <div className="card-gradient-hover" style={styles.sidebarCard}>
             <h3 style={styles.sidebarTitle}>Quick Actions</h3>
             <div style={styles.sidebarLinks}>
               <Link to="/citizen/file-complaint" style={styles.sidebarLink}>
@@ -190,7 +190,7 @@ export default function CitizenHome() {
           </div>
 
           {/* Announcements */}
-          <div style={styles.sidebarCard}>
+          <div className="card-gradient-hover" style={styles.sidebarCard}>
             <h3 style={styles.sidebarTitle}>
               <HiMegaphone style={{ display: 'inline', marginRight: '8px', color: 'var(--primary)' }} />
               Announcements
@@ -212,7 +212,7 @@ export default function CitizenHome() {
           </div>
 
           {/* Help Section - Adapted from Incoming */}
-          <div style={styles.sidebarCard}>
+          <div className="card-gradient-hover" style={styles.sidebarCard}>
             <h3 style={styles.sidebarTitle}>Support</h3>
             <div style={styles.sidebarLinks}>
               <div style={styles.sidebarLink}>

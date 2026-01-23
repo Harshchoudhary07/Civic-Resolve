@@ -221,6 +221,7 @@ export default function FileComplaint() {
                 <div style={styles.group}>
                   <label style={styles.label}>Title *</label>
                   <input
+                    className="input-gradient-focus"
                     style={styles.input}
                     placeholder="Brief, descriptive title (e.g., 'Broken streetlight on Main Road')"
                     name="title"
@@ -240,6 +241,7 @@ export default function FileComplaint() {
                 <div style={styles.group}>
                   <label style={styles.label}>Select Category *</label>
                   <select
+                    className="input-gradient-focus"
                     style={styles.input}
                     name="category"
                     value={formData.category}
@@ -267,6 +269,7 @@ export default function FileComplaint() {
                 <div style={styles.group}>
                   <label style={styles.label}>Detailed Description *</label>
                   <textarea
+                    className="input-gradient-focus"
                     style={{ ...styles.input, ...styles.textarea }}
                     placeholder="Provide a detailed description of the issue. Include when it started, how it affects you, and any other relevant information..."
                     name="description"
