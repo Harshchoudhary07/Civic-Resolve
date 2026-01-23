@@ -1,10 +1,11 @@
 import React from "react";
 import AuthCard from "../components/AuthCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function PendingVerification() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="auth-wrapper">
@@ -29,7 +30,7 @@ export default function PendingVerification() {
           </div>
         </div>
 
-        <button onClick={logout} className="secondary-btn">
+        <button onClick={() => logout(navigate)} className="secondary-btn">
           Logout & Check Later
         </button>
       </AuthCard>

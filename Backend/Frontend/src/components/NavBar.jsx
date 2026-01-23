@@ -16,7 +16,7 @@ export const NavBar = () => {
 
   const handleLogout = () => {
     setShowLogoutModal(false);
-    logout();
+    logout(navigate);
   };
 
   return (

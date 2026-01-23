@@ -140,11 +140,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = (navigate) => {
     localStorage.removeItem("token");
     setUser(null);
     // Optional: Call backend logout endpoint to clear cookies
     fetch("/api/auth/logout", { method: "POST" });
+    // Redirect to landing page if navigate function is provided
+    if (navigate) {
+      navigate("/");
+    }
   };
 
   const forgotPassword = async (email) => {
