@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HiHandThumbUp, HiChatBubbleLeftRight } from 'react-icons/hi2';
+import '../styles/feed-animations.css';
 
 export default function FeedCard({ complaint, onUpvote }) {
     const [showComments, setShowComments] = useState(false);
@@ -7,9 +8,23 @@ export default function FeedCard({ complaint, onUpvote }) {
     const [newComment, setNewComment] = useState('');
     const [loadingComments, setLoadingComments] = useState(false);
     const [commentCount, setCommentCount] = useState(complaint.commentCount || 0);
+    const [isLiked, setIsLiked] = useState(false);
+    const [showLikeAnimation, setShowLikeAnimation] = useState(false);
+    const [likeButtonAnimate, setLikeButtonAnimate] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
 
     const handleUpvoteClick = () => {
+        // Trigger animations
+        setShowLikeAnimation(true);
+        setLikeButtonAnimate(true);
+        setIsLiked(!isLiked);
+        
+        // Call parent upvote handler
         onUpvote(complaint._id);
+        
+        // Reset animations
+        setTimeout(() => setShowLikeAnimation(false), 1000);
+        setTimeout(() => setLikeButtonAnimate(false), 300);
     };
 
     const fetchComments = async () => {
@@ -90,27 +105,62 @@ export default function FeedCard({ complaint, onUpvote }) {
                 <h3 style={styles.title}>{complaint.title}</h3>
                 <p style={styles.description}>{complaint.description}</p>
                 {complaint.attachments && complaint.attachments.length > 0 && (
-                    <div style={styles.imageContainer}>
-                        <img src={complaint.attachments[0].url} alt="Complaint" style={styles.image} />
+                    <div 
+                        style={styles.imageContainer}
+                        onClick={() => setShowImageModal(true)}
+                    >
+                        <img 
+                            src={complaint.attachments[0].url} 
+                            alt="Complaint" 
+                            style={styles.image} 
+                        />
                     </div>
                 )}
             </div>
 
             {/* Actions */}
             <div style={styles.actions}>
-                <button onClick={handleUpvoteClick} className="btn-gradient-ghost" style={styles.actionButton}>
-                    <span><HiHandThumbUp /></span>
+                <button 
+                    onClick={handleUpvoteClick} 
+                    className={`btn-gradient-ghost ${likeButtonAnimate ? 'like-button-animate' : ''}`}
+                    style={{
+                        ...styles.actionButton,
+                        color: isLiked ? '#FF9933' : 'var(--muted)',
+                        fontWeight: isLiked ? '600' : '500'
+                    }}
+                >
+                    <span style={{ 
+                        display: 'inline-flex', 
+                        transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        transform: likeButtonAnimate ? 'scale(1.3)' : 'scale(1)'
+                    }}>
+                        <HiHandThumbUp />
+                    </span>
                     <span>{complaint.upvoteCount} Upvotes</span>
                 </button>
-                <button onClick={fetchComments} className="btn-gradient-ghost" style={styles.actionButton}>
-                    <span><HiChatBubbleLeftRight /></span>
+                <button 
+                    onClick={fetchComments} 
+                    className={`btn-gradient-ghost ${showComments ? 'comment-button-active' : ''}`}
+                    style={{
+                        ...styles.actionButton,
+                        color: showComments ? '#3b82f6' : 'var(--muted)',
+                        fontWeight: showComments ? '600' : '500'
+                    }}
+                >
+                    <span style={{ 
+                        display: 'inline-flex',
+                        transition: 'transform 0.3s ease',
+                        transform: showComments ? 'rotate(15deg) scale(1.1)' : 'rotate(0) scale(1)'
+                    }}>
+                        <HiChatBubbleLeftRight />
+                    </span>
                     <span>{commentCount} Comments</span>
                 </button>
             </div>
 
             {/* Comments Section */}
             {showComments && (
-                <div style={styles.commentsSection}>
+                <div style={styles.commentsSection} className="comments-section-animate">
                     <form onSubmit={handlePostComment} style={styles.commentForm}>
                         <input
                             type="text"
@@ -129,7 +179,7 @@ export default function FeedCard({ complaint, onUpvote }) {
                     ) : (
                         <div style={styles.commentsList}>
                             {comments.map((comment) => (
-                                <div key={comment._id} style={styles.commentItem}>
+                                <div key={comment._id} style={styles.commentItem} className="comment-item-fade-in">
                                     <img
                                         src={comment.user?.profilePicture || `https://ui-avatars.com/api/?name=${comment.user?.name}&background=random`}
                                         alt="User"
@@ -143,6 +193,28 @@ export default function FeedCard({ complaint, onUpvote }) {
                             ))}
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Image Modal */}
+            {showImageModal && complaint.attachments && complaint.attachments.length > 0 && (
+                <div 
+                    style={styles.modalOverlay}
+                    onClick={() => setShowImageModal(false)}
+                >
+                    <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <button 
+                            style={styles.closeButton}
+                            onClick={() => setShowImageModal(false)}
+                        >
+                            ✕
+                        </button>
+                        <img 
+                            src={complaint.attachments[0].url} 
+                            alt="Complaint Full Size" 
+                            style={styles.modalImage}
+                        />
+                    </div>
                 </div>
             )}
         </div>
@@ -217,12 +289,16 @@ const styles = {
         borderRadius: '8px',
         overflow: 'hidden',
         maxHeight: '300px',
-        background: '#f1f5f9'
+        background: '#f1f5f9',
+        cursor: 'pointer',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        position: 'relative'
     },
     image: {
         width: '100%',
         height: '100%',
-        objectFit: 'cover'
+        objectFit: 'cover',
+        transition: 'transform 0.3s ease'
     },
     actions: {
         display: 'flex',
@@ -303,5 +379,53 @@ const styles = {
     commentText: {
         fontSize: '13px',
         color: 'var(--text)'
+    },
+    modalOverlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.9)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        backdropFilter: 'blur(4px)',
+        animation: 'fadeIn 0.2s ease-out'
+    },
+    modalContent: {
+        position: 'relative',
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    modalImage: {
+        maxWidth: '100%',
+        maxHeight: '90vh',
+        objectFit: 'contain',
+        borderRadius: '8px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+    },
+    closeButton: {
+        position: 'absolute',
+        top: '-40px',
+        right: '0',
+        background: 'rgba(255, 255, 255, 0.9)',
+        border: 'none',
+        borderRadius: '50%',
+        width: '36px',
+        height: '36px',
+        fontSize: '20px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#333',
+        fontWeight: 'bold',
+        transition: 'all 0.2s ease',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
     }
 };

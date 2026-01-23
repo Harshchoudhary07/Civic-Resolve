@@ -3,10 +3,12 @@ import AuthCard from "../components/AuthCard";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { GoogleLogin } from '@react-oauth/google';
+import { HiEye, HiEyeSlash } from 'react-icons/hi2';
 
 export default function CommonLogin({ role }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -84,15 +86,41 @@ export default function CommonLogin({ role }) {
             required
             disabled={loading}
           />
-          <input
-            className="input"
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              className="input"
+              placeholder="Password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              style={{ paddingRight: '45px' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--muted)',
+                fontSize: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '4px',
+                transition: 'color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
+            >
+              {showPassword ? <HiEyeSlash /> : <HiEye />}
+            </button>
+          </div>
           <Link to="/forgot-password" style={{ fontSize: '13px', textAlign: 'right', color: 'var(--primary)', textDecoration: 'none', marginTop: '0.25rem' }}>
             Forgot Password?
           </Link>
