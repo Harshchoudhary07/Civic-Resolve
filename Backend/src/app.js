@@ -14,6 +14,7 @@ const complaintRoutes = require('./routes/complaintRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const feedRoutes = require('./routes/feedRoutes');
+const officialRoutes = require('./routes/officialRoutes');
 
 const app = express();
 const cloudinary = require('cloudinary').v2;
@@ -60,6 +61,7 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/feed', feedRoutes);
+app.use('/api/official', officialRoutes);
 
 // Health Check
 app.get('/api', (req, res) => {

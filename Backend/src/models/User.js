@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: {
     type: String,
-    required: function() {
+    required: function () {
       return this.authProvider === 'local';
     },
   },
@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['citizen', 'official', 'admin', 'pending_official'],
     default: 'citizen',
+  },
+  department: {
+    type: String,
+    enum: ['Roads & Infrastructure', 'Sanitation', 'Electricity', 'Water Supply', 'Drainage', 'Traffic Management', 'Public Property', 'Encroachment', 'Others', null],
+    default: null
   },
   // This field is crucial for the approval process
   isActive: {
