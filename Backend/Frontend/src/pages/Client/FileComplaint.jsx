@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  HiDocumentText, 
+  HiClipboardDocumentList, 
+  HiMapPin, 
+  HiCheckCircle, 
+  HiArrowPath, 
+  HiExclamationTriangle 
+} from 'react-icons/hi2';
 
 export default function FileComplaint() {
   const navigate = useNavigate();
@@ -177,7 +185,7 @@ export default function FileComplaint() {
       <div style={styles.container}>
         {/* Header Section */}
         <div style={styles.header}>
-          <h2 style={styles.title}>📝 File a New Complaint</h2>
+          <h2 style={styles.title}><HiDocumentText style={{display: 'inline', marginRight: '8px'}} />File a New Complaint</h2>
           <p style={styles.subtitle}>Help us serve you better by providing detailed information about the issue.</p>
         </div>
 
@@ -206,7 +214,7 @@ export default function FileComplaint() {
               {/* Title Card */}
               <div style={styles.card}>
                 <div style={styles.cardHeader}>
-                  <span style={styles.cardIcon}>📋</span>
+                  <span style={styles.cardIcon}><HiClipboardDocumentList /></span>
                   <h3 style={styles.cardTitle}>Complaint Title</h3>
                 </div>
                 <div style={styles.group}>
@@ -244,7 +252,7 @@ export default function FileComplaint() {
                     <option value="Electricity">⚡ Electricity</option>
                     <option value="Public Safety">🚨 Public Safety</option>
                     <option value="Parks & Recreation">🌳 Parks & Recreation</option>
-                    <option value="Other">📌 Other</option>
+                    <option value="Other"><HiMapPin style={{display: 'inline', marginRight: '4px'}} />Other</option>
                   </select>
                 </div>
               </div>
@@ -252,7 +260,7 @@ export default function FileComplaint() {
               {/* Description Card */}
               <div style={styles.card}>
                 <div style={styles.cardHeader}>
-                  <span style={styles.cardIcon}>📝</span>
+                  <span style={styles.cardIcon}><HiDocumentText /></span>
                   <h3 style={styles.cardTitle}>Description</h3>
                 </div>
                 <div style={styles.group}>
@@ -291,12 +299,12 @@ export default function FileComplaint() {
                     style={styles.locationBtn}
                     disabled={loading}
                   >
-                    <span style={styles.btnIcon}>🎯</span>
+                    <span style={styles.btnIcon}><HiMapPin /></span>
                     {loading ? "Detecting..." : "Use My Current Location"}
                   </button>
                   {formData.latitude && formData.longitude && (
                     <div style={styles.gpsIndicator}>
-                      ✅ GPS coordinates captured
+                      <HiCheckCircle style={{display: 'inline', marginRight: '4px'}} />GPS coordinates captured
                     </div>
                   )}
                 </div>
@@ -339,7 +347,7 @@ export default function FileComplaint() {
                         <img src={URL.createObjectURL(mediaFile)} alt="Captured evidence" style={styles.previewMedia} /> :
                         <video src={URL.createObjectURL(mediaFile)} controls style={styles.previewMedia} />
                       }
-                      <button type="button" onClick={handleRetake} style={styles.retakeBtn}>🔄 Retake</button>
+                      <button type="button" onClick={handleRetake} style={styles.retakeBtn}><HiArrowPath style={{display: 'inline', marginRight: '4px'}} />Retake</button>
                     </div>
                   )}
 
@@ -354,7 +362,7 @@ export default function FileComplaint() {
 
               {error && (
                 <div style={styles.errorBox}>
-                  <span style={styles.errorIcon}>⚠️</span>
+                  <span style={styles.errorIcon}><HiExclamationTriangle /></span>
                   {error}
                 </div>
               )}
@@ -367,7 +375,7 @@ export default function FileComplaint() {
                   </>
                 ) : (
                   <>
-                    <span style={styles.btnIcon}>✅</span>
+                    <span style={styles.btnIcon}><HiCheckCircle /></span>
                     Submit Complaint
                   </>
                 )}
@@ -378,7 +386,7 @@ export default function FileComplaint() {
           {/* Information Sidebar */}
           <div style={styles.infoSection}>
             <div style={styles.infoCard}>
-              <h3 style={styles.infoTitle}>📋 What Happens Next?</h3>
+              <h3 style={styles.infoTitle}><HiClipboardDocumentList style={{display: 'inline', marginRight: '8px'}} />What Happens Next?</h3>
               <div style={styles.timeline}>
                 <div style={styles.timelineItem}>
                   <div style={styles.timelineIcon}>1️⃣</div>

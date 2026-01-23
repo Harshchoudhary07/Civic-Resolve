@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { HiDocumentText } from 'react-icons/hi2';
 
 export const NavBar = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export const NavBar = () => {
           <>
             {user.role === 'citizen' && (
               <button onClick={() => navigate("/citizen/file-complaint")} style={styles.fileBtn}>
-                📝 File Complaint
+                <HiDocumentText style={{display: 'inline', marginRight: '4px'}} />File Complaint
               </button>
             )}
             <div style={styles.profileContainer} onClick={() => navigate(`/${user.role}/profile`)}>

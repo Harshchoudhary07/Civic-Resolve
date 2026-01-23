@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { HiMagnifyingGlass, HiInboxArrowDown } from 'react-icons/hi2';
 
 export default function MyComplaints() {
   const [complaints, setComplaints] = useState([]);
@@ -74,7 +75,7 @@ export default function MyComplaints() {
       {/* Filters and Search */}
       <div style={styles.filterSection}>
         <div style={styles.searchBox}>
-          <span style={styles.searchIcon}>🔍</span>
+          <span style={styles.searchIcon}><HiMagnifyingGlass /></span>
           <input
             type="text"
             placeholder="Search complaints..."
@@ -128,7 +129,7 @@ export default function MyComplaints() {
         {filteredComplaints.length === 0 ? (
           <div style={styles.emptyState}>
             <div style={styles.emptyIcon}>
-              {complaints.length === 0 ? '📭' : '🔍'}
+              {complaints.length === 0 ? <HiInboxArrowDown /> : <HiMagnifyingGlass />}
             </div>
             <div style={styles.emptyTitle}>
               {complaints.length === 0 ? 'No complaints yet' : 'No complaints found'}
@@ -157,7 +158,7 @@ export default function MyComplaints() {
                   <div style={styles.listItemMeta}>
                     <span>📅 {new Date(c.createdAt).toLocaleDateString()}</span>
                     <span>📂 {c.category}</span>
-                    <span>📍 {c.location || 'No location'}</span>
+                    <span>📍 {c.location?.address || 'No location'}</span>
                   </div>
                 </div>
               ) : (

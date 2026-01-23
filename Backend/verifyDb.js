@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Complaint = require('./src/models/Complaint');
 require('dotenv').config();
 
-const MONGO_URI = 'mongodb+srv://sau24082004:Saurabh1234@cluster0.rph06.mongodb.net/civic-resolve?retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI;
 
 const verify = async () => {
     try {

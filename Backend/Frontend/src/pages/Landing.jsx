@@ -1,6 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEffect } from "react";
+import { 
+  HiBuildingLibrary, 
+  HiRocketLaunch, 
+  HiDocumentText, 
+  HiArrowPath, 
+  HiChartBar, 
+  HiCheckCircle, 
+  HiLockClosed, 
+  HiBolt 
+} from 'react-icons/hi2';
 
 export default function Landing() {
   const { user } = useAuth();
@@ -22,7 +32,7 @@ export default function Landing() {
         <div style={styles.heroContent}>
           {/* Government Emblem */}
           <div style={styles.emblem}>
-            <div style={styles.emblemCircle}>🏛️</div>
+            <div style={styles.emblemCircle}><HiBuildingLibrary /></div>
           </div>
 
           <h1 style={styles.title}>CivicResolve</h1>
@@ -35,7 +45,8 @@ export default function Landing() {
           <div style={styles.ctaGroup}>
             <Link to="/citizen/login" style={{ textDecoration: 'none' }}>
               <button style={styles.primaryCta}>
-                🚀 Get Started as Citizen
+                <HiRocketLaunch style={{ display: 'inline', marginRight: '8px' }} />
+                Get Started as Citizen
               </button>
             </Link>
             <Link to="/citizen/register" style={{ textDecoration: 'none' }}>
@@ -60,7 +71,7 @@ export default function Landing() {
           <h2 style={styles.sectionTitle}>How It Works</h2>
           <div style={styles.featureGrid}>
             <div style={styles.featureCard}>
-              <div style={styles.featureIcon}>📝</div>
+              <div style={styles.featureIcon}><HiDocumentText /></div>
               <h3 style={styles.featureTitle}>File Complaint</h3>
               <p style={styles.featureText}>
                 Submit complaints with photos/videos. Track status in real-time with unique ticket ID.
@@ -68,7 +79,7 @@ export default function Landing() {
             </div>
 
             <div style={styles.featureCard}>
-              <div style={styles.featureIcon}>🔄</div>
+              <div style={styles.featureIcon}><HiArrowPath /></div>
               <h3 style={styles.featureTitle}>Auto Escalation</h3>
               <p style={styles.featureText}>
                 Complaints automatically escalate to higher authorities if not resolved within timeframe.
@@ -76,7 +87,7 @@ export default function Landing() {
             </div>
 
             <div style={styles.featureCard}>
-              <div style={styles.featureIcon}>📊</div>
+              <div style={styles.featureIcon}><HiChartBar /></div>
               <h3 style={styles.featureTitle}>Track Progress</h3>
               <p style={styles.featureText}>
                 View detailed timeline, officer details, and receive SMS/email notifications at each step.
@@ -84,7 +95,7 @@ export default function Landing() {
             </div>
 
             <div style={styles.featureCard}>
-              <div style={styles.featureIcon}>✅</div>
+              <div style={styles.featureIcon}><HiCheckCircle /></div>
               <h3 style={styles.featureTitle}>Transparency</h3>
               <p style={styles.featureText}>
                 Complete visibility into escalation levels, officer assignments, and resolution process.
@@ -123,7 +134,7 @@ export default function Landing() {
         <div style={styles.container}>
           <div style={styles.trustBadges}>
             <div style={styles.badge}>
-              <span style={styles.badgeIcon}>🔒</span>
+              <span style={styles.badgeIcon}><HiLockClosed /></span>
               <span style={styles.badgeText}>Secure & Encrypted</span>
             </div>
             <div style={styles.badge}>
@@ -131,7 +142,7 @@ export default function Landing() {
               <span style={styles.badgeText}>Government Verified</span>
             </div>
             <div style={styles.badge}>
-              <span style={styles.badgeIcon}>⚡</span>
+              <span style={styles.badgeIcon}><HiBolt /></span>
               <span style={styles.badgeText}>Fast Resolution</span>
             </div>
           </div>

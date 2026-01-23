@@ -1,5 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { 
+  HiBuildingLibrary, 
+  HiLockClosed, 
+  HiPhone, 
+  HiEnvelope, 
+  HiClock, 
+  HiUsers 
+} from 'react-icons/hi2';
+import { FaTwitter, FaFacebook, FaYoutube, FaInstagram } from 'react-icons/fa';
 
 export const Footer = () => {
   return (
@@ -8,7 +17,7 @@ export const Footer = () => {
         {/* Government Branding */}
         <div style={styles.section}>
           <div style={styles.logoSection}>
-            <div style={styles.emblem}>🏛️</div>
+            <div style={styles.emblem}><HiBuildingLibrary /></div>
             <h3 style={styles.heading}>CivicResolve</h3>
           </div>
           <p style={styles.text}>
@@ -17,7 +26,7 @@ export const Footer = () => {
             Together for a better community.
           </p>
           <div style={styles.badge}>
-            <span style={styles.badgeIcon}>🔒</span>
+            <span style={styles.badgeIcon}><HiLockClosed /></span>
             <span style={styles.badgeText}>Secure & Verified Platform</span>
           </div>
         </div>
@@ -39,21 +48,21 @@ export const Footer = () => {
           <h4 style={styles.subHeading}>Contact & Support</h4>
           <div style={styles.contactInfo}>
             <div style={styles.contactItem}>
-              <span style={styles.icon}>📞</span>
+              <span style={styles.icon}><HiPhone /></span>
               <div>
                 <div style={styles.contactLabel}>Helpline</div>
                 <div style={styles.contactValue}>1800-XXX-XXXX</div>
               </div>
             </div>
             <div style={styles.contactItem}>
-              <span style={styles.icon}>✉️</span>
+              <span style={styles.icon}><HiEnvelope /></span>
               <div>
                 <div style={styles.contactLabel}>Email</div>
                 <div style={styles.contactValue}>support@civicresolve.gov.in</div>
               </div>
             </div>
             <div style={styles.contactItem}>
-              <span style={styles.icon}>⏰</span>
+              <span style={styles.icon}><HiClock /></span>
               <div>
                 <div style={styles.contactLabel}>Working Hours</div>
                 <div style={styles.contactValue}>Mon-Fri: 9:00 AM - 6:00 PM</div>
@@ -66,10 +75,10 @@ export const Footer = () => {
         <div style={styles.section}>
           <h4 style={styles.subHeading}>Connect With Us</h4>
           <div style={styles.socialLinks}>
-            <a href="#twitter" style={styles.socialIcon} title="Twitter">🐦</a>
-            <a href="#facebook" style={styles.socialIcon} title="Facebook">📘</a>
-            <a href="#youtube" style={styles.socialIcon} title="YouTube">📺</a>
-            <a href="#instagram" style={styles.socialIcon} title="Instagram">📷</a>
+            <a href="#twitter" style={styles.socialIcon} title="Twitter"><FaTwitter /></a>
+            <a href="#facebook" style={styles.socialIcon} title="Facebook"><FaFacebook /></a>
+            <a href="#youtube" style={styles.socialIcon} title="YouTube"><FaYoutube /></a>
+            <a href="#instagram" style={styles.socialIcon} title="Instagram"><FaInstagram /></a>
           </div>
           <div style={styles.links}>
             <a href="#accessibility" style={styles.link}>Accessibility Statement</a>
@@ -89,7 +98,7 @@ export const Footer = () => {
           <div style={styles.metadata}>
             <span style={styles.metaItem}>Last Updated: {new Date().toLocaleDateString('en-IN')}</span>
             <span style={styles.metaItem}>|</span>
-            <span style={styles.metaItem}>👥 Visitors: 1,234,567</span>
+            <span style={styles.metaItem}><HiUsers style={{display: 'inline', marginRight: '4px'}} />Visitors: 1,234,567</span>
           </div>
         </div>
       </div>
