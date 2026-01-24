@@ -488,7 +488,6 @@ const styles = {
     flex: 1,
     textAlign: "center",
     borderRight: "1px solid var(--border)",
-    "&:last-child": { borderRight: "none" }
   },
   miniStatValue: {
     display: "block",

@@ -28,6 +28,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PendingVerification from "./pages/PendingVerification";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CitizenLayout from "./components/CitizenLayout";
+import ChangePassword from "./pages/ChangePassword";
 
 // Import government styles
 import "./styles/govStyles.css";
@@ -85,6 +86,7 @@ export default function App() {
               <Route path="/citizen/my-complaints" element={<MyComplaints />} />
               <Route path="/citizen/complaint/:id" element={<ComplaintDetails />} />
               <Route path="/citizen/profile" element={<CitizenProfile />} />
+              <Route path="/citizen/change-password" element={<ChangePassword />} />
             </Route>
 
             {/* Official Routes */}
@@ -92,6 +94,7 @@ export default function App() {
             <Route path="/official/complaint/:id" element={<ProtectedRoute role="official"><OfficialComplaintDetails /></ProtectedRoute>} />
             <Route path="/official/profile" element={<ProtectedRoute role="official"><OfficialProfile /></ProtectedRoute>} />
             <Route path="/official/analytics" element={<ProtectedRoute role="official"><OfficialAnalytics /></ProtectedRoute>} />
+            <Route path="/official/change-password" element={<ProtectedRoute role="official"><ChangePassword /></ProtectedRoute>} />
 
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
@@ -101,6 +104,7 @@ export default function App() {
             <Route path="/admin/departments" element={<ProtectedRoute role="admin"><DepartmentManagement /></ProtectedRoute>} />
             <Route path="/admin/complaints" element={<ProtectedRoute role="admin"><ComplaintOversight /></ProtectedRoute>} />
             <Route path="/admin/analytics" element={<ProtectedRoute role="admin"><AdminAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/change-password" element={<ProtectedRoute role="admin"><ChangePassword /></ProtectedRoute>} />
           </Routes>
         </main>
         <ConditionalFooter />

@@ -62,6 +62,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/feed', feedRoutes);
 app.use('/api/official', officialRoutes);
+app.use('/api/feedbacks', require('./routes/feedbackRoutes')); // Mount feedback routes
 
 // Health Check
 app.get('/api', (req, res) => {

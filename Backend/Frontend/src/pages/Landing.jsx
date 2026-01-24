@@ -26,6 +26,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [feedbacks, setFeedbacks] = useState([]);
   const observerRef = useRef(null);
 
   useEffect(() => {
@@ -35,6 +36,12 @@ export default function Landing() {
       else if (user.role === 'official') navigate('/official/dashboard');
       else if (user.role === 'admin') navigate('/admin/dashboard');
     }
+
+    // Fetch feedbacks
+    fetch('/api/feedbacks')
+      .then(res => res.json())
+      .then(data => setFeedbacks(data))
+      .catch(err => console.error('Error fetching feedbacks:', err));
   }, [user, navigate]);
 
   // Mouse tracking for parallax effect
@@ -113,6 +120,29 @@ export default function Landing() {
 
         .icon-hover:hover {
           transform: rotate(10deg) scale(1.1);
+        }
+
+        .marquee-container {
+          overflow: hidden;
+          padding: 2rem 0;
+          mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+          width: 100%;
+        }
+
+        .marquee-content {
+          display: flex;
+          gap: 2rem;
+          width: max-content;
+          animation: marquee 60s linear infinite;
+        }
+
+        .marquee-content:hover {
+          animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
 
@@ -417,47 +447,28 @@ export default function Landing() {
             Real feedback from people using CivicResolve
           </p>
 
-          <div style={styles.testimonialGrid}>
-            <div className="card-gradient-hover card-hover" style={styles.testimonialCard}>
-              <div style={styles.stars}>⭐⭐⭐⭐⭐</div>
-              <p style={styles.testimonialText}>
-                "Finally, a system that works! I can see exactly who's handling my complaint and when it will be resolved. The transparency is incredible."
-              </p>
-              <div style={styles.testimonialAuthor}>
-                <div style={styles.authorAvatar} className="author-avatar">RS</div>
-                <div>
-                  <div style={styles.authorName}>Rajesh Sharma</div>
-                  <div style={styles.authorRole}>Citizen, Mumbai</div>
+          <div className="marquee-container">
+            <div className="marquee-content">
+              {/* Duplicate the feedbacks to create seamless infinite scroll loop */}
+              {[...feedbacks, ...feedbacks].map((feedback, index) => (
+                <div key={index} className="card-gradient-hover" style={styles.testimonialCard}>
+                  <div style={styles.stars}>
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} style={{ color: i < feedback.rating ? '#FFD700' : '#E5E7EB' }}>★</span>
+                    ))}
+                  </div>
+                  <p style={styles.testimonialText}>
+                    "{feedback.comment}"
+                  </p>
+                  <div style={styles.testimonialAuthor}>
+                    <div style={styles.authorAvatar} className="author-avatar">{feedback.role ? feedback.role.charAt(0) : 'U'}</div>
+                    <div>
+                      <div style={styles.authorName}>{feedback.role || 'Citizen'}</div>
+                      <div style={styles.authorRole}>{feedback.location || 'India'}</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="card-gradient-hover card-hover" style={styles.testimonialCard}>
-              <div style={styles.stars}>⭐⭐⭐⭐⭐</div>
-              <p style={styles.testimonialText}>
-                "The auto-escalation feature is a game-changer. My complaint was stuck for days, but it automatically went to higher authorities and got resolved immediately."
-              </p>
-              <div style={styles.testimonialAuthor}>
-                <div style={styles.authorAvatar} className="author-avatar">PK</div>
-                <div>
-                  <div style={styles.authorName}>Priya Kapoor</div>
-                  <div style={styles.authorRole}>Citizen, Delhi</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-gradient-hover card-hover" style={styles.testimonialCard}>
-              <div style={styles.stars}>⭐⭐⭐⭐⭐</div>
-              <p style={styles.testimonialText}>
-                "As a government official, this platform has streamlined our workflow. We can prioritize urgent issues and track our performance metrics easily."
-              </p>
-              <div style={styles.testimonialAuthor}>
-                <div style={styles.authorAvatar} className="author-avatar">AM</div>
-                <div>
-                  <div style={styles.authorName}>Amit Mehta</div>
-                  <div style={styles.authorRole}>PWD Official, Bangalore</div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -945,10 +956,17 @@ const styles = {
   },
   testimonialCard: {
     background: 'var(--card)',
-    padding: '2.5rem',
+    padding: '2rem',
     borderRadius: '16px',
     border: '1px solid var(--border)',
     boxShadow: 'var(--shadow-md)',
+    minWidth: '320px',  // Fixed width
+    width: '320px',     // Fixed width
+    height: '320px',    // Fixed height (Square-ish)
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    flexShrink: 0,      // Prevent shrinking in marquee
   },
   stars: {
     fontSize: '1.25rem',
@@ -957,9 +975,14 @@ const styles = {
   testimonialText: {
     fontSize: '1.05rem',
     color: 'var(--text)',
-    lineHeight: '1.7',
+    lineHeight: '1.6',
     marginBottom: '1.5rem',
     fontStyle: 'italic',
+    flex: 1,
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitLineClamp: 7, // Limit text lines
+    WebkitBoxOrient: 'vertical',
   },
   testimonialAuthor: {
     display: 'flex',

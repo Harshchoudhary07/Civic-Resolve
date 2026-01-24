@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { HiDocumentText, HiBell } from 'react-icons/hi2';
+import GiveFeedbackModal from './GiveFeedbackModal'; // Add import
 
 export const NavBar = () => {
   const navigate = useNavigate();
@@ -10,7 +11,8 @@ export const NavBar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0); // Add unreadCount state
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const { user, logout } = useAuth();
   const { socket, connected } = useSocket();
 
@@ -196,18 +198,6 @@ export const NavBar = () => {
                 )}
               </div>
 
-              {/* Profile */}
-              <div style={styles.profileContainer} onClick={() => navigate(`/${user.role}/profile`)}>
-                <img
-                  src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name}&background=random`}
-                  alt="Profile"
-                  style={styles.profileImage}
-                />
-              </div>
-              
-              {/* Logout */}
-              <button onClick={() => setShowLogoutModal(true)} className="btn-gradient-ghost" style={styles.logoutBtn}>Logout</button>
-              
               {/* Theme Toggle */}
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -216,6 +206,60 @@ export const NavBar = () => {
               >
                 {theme === "dark" ? "🌙" : "☀️"}
               </button>
+              
+              {/* Profile Dropdown - Rightmost */}
+              <div 
+                style={styles.profileDropdownContainer}
+                onMouseEnter={() => setShowProfileDropdown(true)}
+                onMouseLeave={() => setShowProfileDropdown(false)}
+              >
+                <div style={styles.profileContainer}>
+                  <img
+                    src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name}&background=random`}
+                    alt="Profile"
+                    style={styles.profileImage}
+                  />
+                </div>
+                
+                {/* Profile Dropdown Menu */}
+                {showProfileDropdown && (
+                  <div style={styles.profileDropdown}>
+                    <div style={styles.profileDropdownHeader}>
+                      <div style={styles.profileDropdownName}>{user.name}</div>
+                      <div style={styles.profileDropdownEmail}>{user.email}</div>
+                    </div>
+                    <div style={styles.profileDropdownDivider}></div>
+                    <button
+                      onClick={() => {
+                        navigate(`/${user.role}/profile`);
+                        setShowProfileDropdown(false);
+                      }}
+                      style={styles.profileDropdownItem}
+                    >
+                      👤 View Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate(`/${user.role}/change-password`);
+                        setShowProfileDropdown(false);
+                      }}
+                      style={styles.profileDropdownItem}
+                    >
+                      🔑 Change Password
+                    </button>
+                    <div style={styles.profileDropdownDivider}></div>
+                    <button
+                      onClick={() => {
+                        setShowProfileDropdown(false);
+                        setShowLogoutModal(true);
+                      }}
+                      style={{...styles.profileDropdownItem, ...styles.profileDropdownLogout}}
+                    >
+                      🚪 Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <button onClick={() => navigate("/citizen/login")} className="btn-gradient-primary" style={styles.loginBtn}>Login</button>
@@ -527,5 +571,57 @@ const styles = {
     fontWeight: "600",
     boxShadow: "var(--shadow-md)",
     transition: "transform 0.1s",
+  },
+  profileDropdownContainer: {
+    position: 'relative',
+  },
+  profileDropdown: {
+    position: 'absolute',
+    top: '48px',
+    right: '0',
+    background: 'var(--card)',
+    border: '1px solid var(--border)',
+    borderRadius: '12px',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+    minWidth: '220px',
+    zIndex: 1000,
+    animation: 'fadeIn 0.2s ease',
+  },
+  profileDropdownHeader: {
+    padding: '16px',
+    borderBottom: '1px solid var(--border)',
+  },
+  profileDropdownName: {
+    fontWeight: '600',
+    color: 'var(--text)',
+    fontSize: '15px',
+    marginBottom: '4px',
+  },
+  profileDropdownEmail: {
+    fontSize: '13px',
+    color: 'var(--muted)',
+  },
+  profileDropdownDivider: {
+    height: '1px',
+    background: 'var(--border)',
+    margin: '8px 0',
+  },
+  profileDropdownItem: {
+    width: '100%',
+    padding: '12px 16px',
+    background: 'transparent',
+    border: 'none',
+    textAlign: 'left',
+    cursor: 'pointer',
+    fontSize: '14px',
+    color: 'var(--text)',
+    transition: 'background 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  profileDropdownLogout: {
+    color: '#ef4444',
+    fontWeight: '500',
   },
 };

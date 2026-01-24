@@ -8,9 +8,13 @@ const path = require('path');
 const app = require('./app');
 const connectDB = require('./config/db');
 const { initializeSocket } = require('./config/socket');
+const { seedFeedbacks } = require('./controllers/feedbackController');
 
 // Connect to database
-connectDB().then(() => {
+connectDB().then(async () => {
+  // Seed initial feedbacks if needed
+  await seedFeedbacks();
+
   const PORT = process.env.PORT || 5000;
 
   // Create HTTP server
