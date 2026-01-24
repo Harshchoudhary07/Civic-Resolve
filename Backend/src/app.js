@@ -69,29 +69,6 @@ app.get('/api', (req, res) => {
   res.status(200).json({ message: 'Complaint Redressal System API is running' });
 });
 
-console.log('__dirname:', __dirname);
-console.log('Resolved FE path:', path.resolve(__dirname, '..', '..', 'Frontend', 'dist'));
-
-
-// Serve Frontend in production
-if (process.env.NODE_ENV === 'production') {
-  const feBuildPath = path.join(process.cwd(), 'Frontend', 'dist');
-
-  console.log('Serving frontend from:', feBuildPath);
-
-  app.use(express.static(feBuildPath));
-
-  app.get('*', (req, res) => {
-    // Don't serve index.html for API routes
-    if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ message: 'API route not found' });
-    }
-    res.sendFile(path.join(feBuildPath, 'index.html'));
-  });
-}
-
-
-
 // Error Handler
 app.use(notFound);
 app.use(errorHandler);
