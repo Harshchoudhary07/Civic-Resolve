@@ -64,6 +64,10 @@ export default function FileComplaint() {
   useEffect(() => {
     if (stream && videoRef.current) {
       videoRef.current.srcObject = stream;
+      // Ensure video plays automatically
+      videoRef.current.play().catch(err => {
+        console.error('Error playing video:', err);
+      });
     }
   }, [stream]);
 
@@ -71,6 +75,13 @@ export default function FileComplaint() {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Validate evidence is provided
+    if (!mediaFile) {
+      setError('Evidence (photo or video) is required. Please capture evidence before submitting.');
+      setLoading(false);
+      return;
+    }
 
     const submissionData = new FormData();
     submissionData.append('title', formData.title);
@@ -85,10 +96,8 @@ export default function FileComplaint() {
       submissionData.append('manualAddress', formData.location);
     }
 
-    // Append the captured file if it exists
-    if (mediaFile) {
-      submissionData.append('evidence', mediaFile);
-    }
+    // Append the captured file
+    submissionData.append('evidence', mediaFile);
 
     try {
       const res = await fetch('/api/complaints', {
@@ -168,14 +177,27 @@ export default function FileComplaint() {
     setError("");
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'environment', // Prefer back camera on mobile
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        });
         setStream(mediaStream);
       } catch (err) {
         console.error("Error accessing camera:", err);
-        setError("Could not access camera. Please check permissions.");
+        if (err.name === 'NotAllowedError') {
+          setError("Camera access denied. Please allow camera permissions in your browser settings.");
+        } else if (err.name === 'NotFoundError') {
+          setError("No camera found on this device.");
+        } else {
+          setError("Could not access camera. Please check permissions and try again.");
+        }
       }
     } else {
-      setError("Camera not supported on this device.");
+      setError("Camera not supported on this device/browser.");
     }
   };
 
@@ -250,24 +272,6 @@ export default function FileComplaint() {
           <p style={styles.subtitle}>Help us serve you better by providing detailed information about the issue.</p>
         </div>
 
-        {/* Progress Indicator */}
-        <div style={styles.progressBar}>
-          <div style={{ ...styles.progressStep, ...styles.progressStepActive }}>
-            <div style={styles.progressDot}>1</div>
-            <span style={styles.progressLabel}>Details</span>
-          </div>
-          <div style={styles.progressLine}></div>
-          <div style={styles.progressStep}>
-            <div style={styles.progressDot}>2</div>
-            <span style={styles.progressLabel}>Evidence</span>
-          </div>
-          <div style={styles.progressLine}></div>
-          <div style={styles.progressStep}>
-            <div style={styles.progressDot}>3</div>
-            <span style={styles.progressLabel}>Submit</span>
-          </div>
-        </div>
-
         <div className="file-complaint-grid">
           {/* Main Form */}
           <div style={styles.formSection}>
@@ -335,9 +339,20 @@ export default function FileComplaint() {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
+                    minLength={20}
                     required
                   />
-                  <div style={styles.charCount}>{formData.description.length} characters</div>
+                  <div style={{
+                    ...styles.charCount,
+                    color: formData.description.length < 20 ? 'var(--error)' : 'var(--muted)'
+                  }}>
+                    {formData.description.length} / 20 characters minimum
+                    {formData.description.length > 0 && formData.description.length < 20 && (
+                      <span style={{ marginLeft: '8px', color: 'var(--error)' }}>
+                        ({20 - formData.description.length} more required)
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -415,7 +430,7 @@ export default function FileComplaint() {
               <div style={styles.card}>
                 <div style={styles.cardHeader}>
                   <span style={styles.cardIcon}>📸</span>
-                  <h3 style={styles.cardTitle}>Evidence (Optional)</h3>
+                  <h3 style={styles.cardTitle}>Evidence *</h3>
                 </div>
                 <div style={styles.group}>
                   <label style={styles.label}>Photo or Video Evidence</label>
@@ -423,7 +438,7 @@ export default function FileComplaint() {
 
                   {stream && (
                     <div style={styles.cameraView}>
-                      <video ref={videoRef} autoPlay style={styles.video} />
+                      <video ref={videoRef} autoPlay playsInline muted style={styles.video} />
                       {!isRecording ? (
                         <div style={styles.cameraActions}>
                           <button type="button" onClick={handleCapturePhoto} style={styles.captureBtn}>

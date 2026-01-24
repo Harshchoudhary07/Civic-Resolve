@@ -332,6 +332,40 @@ const getComplaintAnalytics = async (req, res, next) => {
   }
 };
 
+// @desc    Delete complaint
+// @route   DELETE /api/complaints/:id
+// @access  Private (Citizen - own complaints only)
+const deleteComplaint = async (req, res, next) => {
+  try {
+    const complaint = await Complaint.findById(req.params.id);
+
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: 'Complaint not found'
+      });
+    }
+
+    // Check ownership - only the user who created the complaint can delete it
+    if (complaint.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to delete this complaint'
+      });
+    }
+
+    // Delete complaint
+    await Complaint.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Complaint deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createComplaint,
   getMyComplaints,
@@ -340,4 +374,5 @@ module.exports = {
   updateComplaintStatus,
   getComplaintSummary,
   getComplaintAnalytics,
+  deleteComplaint,
 };

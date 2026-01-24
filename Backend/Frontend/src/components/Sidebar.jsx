@@ -15,6 +15,8 @@ export default function Sidebar() {
   const [recentComplaints, setRecentComplaints] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const { socket, connected } = useSocket();
   const { user } = useAuth();
 
@@ -87,6 +89,39 @@ export default function Sidebar() {
     }
   }, [socket, connected, user]);
 
+  const handleDelete = async (id) => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/complaints/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        // Remove from sidebar
+        setRecentComplaints(prev => prev.filter(c => c._id !== id));
+        setDeleteConfirm(null);
+        
+        // Update summary counts
+        setSummary(prev => ({
+          ...prev,
+          open: Math.max(0, prev.open - 1)
+        }));
+        
+        // Trigger page reload to update feed and other components
+        window.location.reload();
+      } else {
+        alert(data.message || 'Failed to delete complaint');
+      }
+    } catch (error) {
+      console.error('Error deleting complaint:', error);
+      alert('Error deleting complaint');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: '1.5rem' }}>Loading...</div>;
   }
@@ -109,7 +144,19 @@ export default function Sidebar() {
             recentComplaints.map((c) => (
               <li key={c._id} style={styles.listItem}>
                 <Link to={`/citizen/complaint/${c._id}`} style={styles.link}>{c.title}</Link>
-                <span style={styles.statusBadge}>{c.currentStatus}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={styles.statusBadge}>{c.currentStatus}</span>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDeleteConfirm(c._id);
+                    }}
+                    style={styles.deleteBtn}
+                    title="Delete complaint"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </li>
             ))
           ) : (
@@ -132,6 +179,34 @@ export default function Sidebar() {
           )}
         </ul>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div style={styles.modalOverlay} onClick={() => setDeleteConfirm(null)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>Delete Complaint?</h3>
+            <p style={styles.modalText}>
+              Are you sure you want to delete this complaint? This action cannot be undone.
+            </p>
+            <div style={styles.modalActions}>
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                style={styles.modalCancelButton}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirm)}
+                style={styles.modalDeleteButton}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -209,5 +284,71 @@ const styles = {
         color: 'var(--text)',
         cursor: 'pointer',
         width: '100%',
-    }
+    },
+    deleteBtn: {
+        background: 'rgba(239, 68, 68, 0.1)',
+        border: '1px solid rgba(239, 68, 68, 0.3)',
+        borderRadius: '6px',
+        padding: '4px 8px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        transition: 'all 0.2s ease',
+    },
+    modalOverlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+    },
+    modalContent: {
+        background: 'var(--card)',
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '400px',
+        width: '90%',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+    },
+    modalTitle: {
+        fontSize: '20px',
+        fontWeight: '700',
+        color: 'var(--text)',
+        marginBottom: '12px',
+    },
+    modalText: {
+        fontSize: '14px',
+        color: 'var(--muted)',
+        marginBottom: '20px',
+        lineHeight: '1.5',
+    },
+    modalActions: {
+        display: 'flex',
+        gap: '12px',
+        justifyContent: 'flex-end',
+    },
+    modalCancelButton: {
+        padding: '8px 16px',
+        borderRadius: '8px',
+        border: '1px solid var(--border)',
+        background: 'var(--bg)',
+        color: 'var(--text)',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '500',
+    },
+    modalDeleteButton: {
+        padding: '8px 16px',
+        borderRadius: '8px',
+        border: 'none',
+        background: '#ef4444',
+        color: 'white',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: '500',
+    },
 };

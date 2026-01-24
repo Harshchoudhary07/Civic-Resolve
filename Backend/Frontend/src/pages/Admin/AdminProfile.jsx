@@ -9,6 +9,7 @@ const AdminProfile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState('');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -22,9 +23,17 @@ const AdminProfile = () => {
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
+    
+    // Validate mobile number
+    if (formData.mobileNumber && !/^\d{10}$/.test(formData.mobileNumber)) {
+      setValidationError('Mobile number must be exactly 10 digits');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     setSuccess('');
+    setValidationError('');
     try {
       const token = localStorage.getItem('token');
       const res = await fetch('/api/users/profile', {
@@ -113,10 +122,36 @@ const AdminProfile = () => {
         {isEditing ? (
           <form onSubmit={handleProfileUpdate} style={styles.form}>
             <input style={styles.input} value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Full Name" required />
-            <input style={styles.input} value={formData.mobileNumber} onChange={(e) => setFormData({...formData, mobileNumber: e.target.value})} placeholder="Mobile Number" />
+            <div>
+              <input 
+                style={{
+                  ...styles.input,
+                  borderColor: validationError ? 'var(--error)' : 'var(--border)'
+                }} 
+                value={formData.mobileNumber} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+                  setFormData({...formData, mobileNumber: value});
+                  setValidationError('');
+                }} 
+                placeholder="Mobile Number (10 digits)" 
+                maxLength={10}
+                pattern="\d{10}"
+              />
+              {validationError && (
+                <p style={{ color: 'var(--error)', fontSize: '0.85rem', marginTop: '4px', marginBottom: 0 }}>
+                  {validationError}
+                </p>
+              )}
+              {formData.mobileNumber && formData.mobileNumber.length < 10 && (
+                <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: '4px', marginBottom: 0 }}>
+                  {formData.mobileNumber.length} / 10 digits
+                </p>
+              )}
+            </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button type="submit" className="primary-btn" disabled={loading}>{loading ? 'Saving...' : 'Save Changes'}</button>
-              <button type="button" className="secondary-btn" onClick={() => setIsEditing(false)} disabled={loading}>Cancel</button>
+              <button type="button" className="secondary-btn" onClick={() => { setIsEditing(false); setValidationError(''); }} disabled={loading}>Cancel</button>
             </div>
           </form>
         ) : (

@@ -31,6 +31,7 @@ export default function CitizenHome() {
   const [stats, setStats] = useState({ total: 0, open: 0, inProgress: 0, resolved: 0 });
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('newest'); // 'newest' or 'priority'
 
   useEffect(() => {
     fetchDashboardData();
@@ -64,6 +65,20 @@ export default function CitizenHome() {
       setLoading(false);
     }
   };
+
+  // Sort feed based on selected filter
+  const sortedFeed = React.useMemo(() => {
+    if (!feed || feed.length === 0) return [];
+    
+    const sorted = [...feed];
+    if (sortBy === 'priority') {
+      // Sort by upvotes (descending)
+      return sorted.sort((a, b) => (b.upvoteCount || 0) - (a.upvoteCount || 0));
+    } else {
+      // Sort by newest (createdAt descending)
+      return sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+  }, [feed, sortBy]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -99,9 +114,25 @@ export default function CitizenHome() {
         <div style={styles.mainColumn}>
           <div style={styles.feedHeader}>
             <h2 style={styles.pageTitle}>Community Feed</h2>
-            <div style={styles.feedFilters}>
-              <button style={styles.activeFilter}><HiFire style={{display: 'inline', marginRight: '4px'}} />Priority</button>
-              <button style={styles.inactiveFilter}><HiSparkles style={{display: 'inline', marginRight: '4px'}} />Newest</button>
+            <div style={styles.toggleContainer}>
+              <button
+                onClick={() => setSortBy('newest')}
+                style={{
+                  ...styles.toggleButton,
+                  ...(sortBy === 'newest' ? styles.toggleButtonActive : {})
+                }}
+              >
+                <HiSparkles style={{display: 'inline', marginRight: '4px'}} />Newest
+              </button>
+              <button
+                onClick={() => setSortBy('priority')}
+                style={{
+                  ...styles.toggleButton,
+                  ...(sortBy === 'priority' ? styles.toggleButtonActive : {})
+                }}
+              >
+                <HiFire style={{display: 'inline', marginRight: '4px'}} />Priority
+              </button>
             </div>
           </div>
 
@@ -134,7 +165,7 @@ export default function CitizenHome() {
                 </Link>
               </div>
             ) : (
-              feed.map((complaint) => (
+              sortedFeed.map((complaint) => (
                 <FeedCard
                   key={complaint._id}
                   complaint={complaint}
@@ -296,6 +327,34 @@ const styles = {
     fontSize: "13px",
     color: "var(--muted)",
     cursor: "pointer"
+  },
+  toggleContainer: {
+    display: 'inline-flex',
+    background: 'var(--card)',
+    border: '1px solid var(--border)',
+    borderRadius: '12px',
+    padding: '4px',
+    gap: '4px',
+  },
+  toggleButton: {
+    padding: '8px 16px',
+    borderRadius: '8px',
+    border: 'none',
+    background: 'transparent',
+    color: 'var(--muted)',
+    fontSize: '14px',
+    fontWeight: '500',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+  },
+  toggleButtonActive: {
+    background: 'linear-gradient(135deg, #FF9933 0%, #FF6600 100%)',
+    color: 'white',
+    fontWeight: '600',
+    boxShadow: '0 2px 8px rgba(255, 153, 51, 0.3)',
   },
 
   // Create Post Input

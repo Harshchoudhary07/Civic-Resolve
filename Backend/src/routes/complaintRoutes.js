@@ -8,6 +8,7 @@ const {
   updateComplaintStatus,
   getComplaintSummary, // New endpoint for dashboard stats
   getComplaintAnalytics, // New endpoint for analytics page
+  deleteComplaint, // Delete complaint endpoint
 } = require('../controllers/complaintController');
 const { protect, authorize } = require('../middlewares/authMiddleware');
 const multer = require('multer');
@@ -17,7 +18,7 @@ router.route('/').post(protect, upload.array('evidence', 5), createComplaint).ge
 router.route('/my-complaints').get(protect, authorize('citizen'), getMyComplaints);
 router.route('/summary').get(protect, authorize('official', 'admin'), getComplaintSummary); // Route for dashboard summary
 router.route('/analytics').get(protect, authorize('official', 'admin'), getComplaintAnalytics); // Route for analytics
-router.route('/:id').get(protect, getComplaintById); // Protect this route for all roles
+router.route('/:id').get(protect, getComplaintById).delete(protect, authorize('citizen'), deleteComplaint); // Add DELETE method
 router.route('/:id/status').put(protect, authorize('official', 'admin'), updateComplaintStatus);
 
 module.exports = router;

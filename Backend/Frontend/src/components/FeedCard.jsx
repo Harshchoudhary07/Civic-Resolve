@@ -109,11 +109,23 @@ export default function FeedCard({ complaint, onUpvote }) {
                         style={styles.imageContainer}
                         onClick={() => setShowImageModal(true)}
                     >
-                        <img 
-                            src={complaint.attachments[0].url} 
-                            alt="Complaint" 
-                            style={styles.image} 
-                        />
+                        {complaint.attachments[0].mediaType === 'video' ? (
+                            <video 
+                                src={complaint.attachments[0].url} 
+                                style={styles.video}
+                                controls
+                                playsInline
+                                preload="metadata"
+                                onMouseEnter={(e) => e.target.play()}
+                                onMouseLeave={(e) => e.target.pause()}
+                            />
+                        ) : (
+                            <img 
+                                src={complaint.attachments[0].url} 
+                                alt="Complaint" 
+                                style={styles.image} 
+                            />
+                        )}
                     </div>
                 )}
             </div>
@@ -196,7 +208,7 @@ export default function FeedCard({ complaint, onUpvote }) {
                 </div>
             )}
 
-            {/* Image Modal */}
+            {/* Image/Video Modal */}
             {showImageModal && complaint.attachments && complaint.attachments.length > 0 && (
                 <div 
                     style={styles.modalOverlay}
@@ -209,11 +221,21 @@ export default function FeedCard({ complaint, onUpvote }) {
                         >
                             ✕
                         </button>
-                        <img 
-                            src={complaint.attachments[0].url} 
-                            alt="Complaint Full Size" 
-                            style={styles.modalImage}
-                        />
+                        {complaint.attachments[0].mediaType === 'video' ? (
+                            <video 
+                                src={complaint.attachments[0].url} 
+                                style={styles.modalImage}
+                                controls
+                                autoPlay
+                                playsInline
+                            />
+                        ) : (
+                            <img 
+                                src={complaint.attachments[0].url} 
+                                alt="Complaint Full Size" 
+                                style={styles.modalImage}
+                            />
+                        )}
                     </div>
                 </div>
             )}
@@ -301,6 +323,13 @@ const styles = {
         height: '100%',
         objectFit: 'cover',
         transition: 'transform 0.3s ease'
+    },
+    video: {
+        width: '100%',
+        maxHeight: '400px',
+        objectFit: 'contain',
+        background: '#000',
+        borderRadius: '8px',
     },
     actions: {
         display: 'flex',
