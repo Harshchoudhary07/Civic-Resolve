@@ -229,11 +229,13 @@ const getStatusStyle = (status) => ({
     background:
         status === "Resolved" ? "#dcfce7" :
             status === "In Progress" ? "#dbeafe" :
-                status === "Pending" ? "#fef3c7" : "#fee2e2",
+                status === "Pending" || status === "SUBMITTED" ? "#fef3c7" :
+                    status === "Escalated" ? "#fef3c7" : "#fee2e2",
     color:
         status === "Resolved" ? "#166534" :
             status === "In Progress" ? "#1e40af" :
-                status === "Pending" ? "#b45309" : "#991b1b",
+                status === "Pending" || status === "SUBMITTED" ? "#b45309" :
+                    status === "Escalated" ? "#b45309" : "#991b1b",
 });
 
 const styles = {

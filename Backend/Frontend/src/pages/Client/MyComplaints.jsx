@@ -96,6 +96,7 @@ export default function MyComplaints() {
             <option value="In Progress">In Progress</option>
             <option value="Resolved">Resolved</option>
             <option value="Rejected">Rejected</option>
+            <option value="Escalated">Escalated</option>
           </select>
 
           <div style={styles.viewToggle}>
@@ -229,10 +230,12 @@ const styles = {
     background:
       state === "Resolved" ? "#dcfce7" :
         state === "In Progress" ? "#dbeafe" :
-          state === "Pending" ? "#fef3c7" : "#fee2e2",
+          state === "Pending" || state === "SUBMITTED" ? "#fef3c7" :
+            state === "Escalated" ? "#fef3c7" : "#fee2e2",
     color:
       state === "Resolved" ? "#166534" :
         state === "In Progress" ? "#1e40af" :
-          state === "Pending" ? "#b45309" : "#991b1b",
+          state === "Pending" || state === "SUBMITTED" ? "#b45309" :
+            state === "Escalated" ? "#b45309" : "#991b1b",
   })
 };

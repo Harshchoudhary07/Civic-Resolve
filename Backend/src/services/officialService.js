@@ -16,6 +16,8 @@ const getOfficialDashboard = async (officialId, filters = {}) => {
         throw new Error('Official is not assigned to any department');
     }
 
+    console.log(`[Dashboard] Official: ${official.name}, Department: ${department}`);
+
     // Base Match Stage: Open/InProgress & Matching Department
     const matchStage = {
         category: department,
@@ -24,6 +26,8 @@ const getOfficialDashboard = async (officialId, filters = {}) => {
 
     // Add filters if any (e.g., search)
     if (filters.status) matchStage.currentStatus = filters.status;
+
+    console.log(`[Dashboard] Match Stage:`, matchStage);
 
     const dashboardData = await Complaint.aggregate([
         { $match: matchStage },
@@ -43,6 +47,8 @@ const getOfficialDashboard = async (officialId, filters = {}) => {
         },
         { $sort: { priorityScore: -1, createdAt: -1 } } // Highest priority first
     ]);
+
+    console.log(`[Dashboard] Found ${dashboardData.length} complaints`);
 
     return dashboardData;
 };
@@ -74,7 +80,7 @@ const getComplaintDetails = async (complaintId, officialId) => {
  */
 const updateComplaintStatus = async (complaintId, officialId, newStatus, remarkText) => {
     const official = await User.findById(officialId);
-    const complaint = await Complaint.findById(complaintId);
+    const complaint = await Complaint.findById(complaintId).populate('user', 'name email');
 
     if (!complaint) throw new Error('Complaint not found');
     if (complaint.category !== official.department) throw new Error('Access Denied');
@@ -82,6 +88,8 @@ const updateComplaintStatus = async (complaintId, officialId, newStatus, remarkT
     // Validate Status Transition (Basic)
     const validStatuses = ['Pending', 'In Progress', 'Resolved', 'Rejected', 'Escalated'];
     if (!validStatuses.includes(newStatus)) throw new Error('Invalid Status');
+
+    const oldStatus = complaint.currentStatus;
 
     // Update Fields
     complaint.currentStatus = newStatus;
@@ -108,6 +116,63 @@ const updateComplaintStatus = async (complaintId, officialId, newStatus, remarkT
     }
 
     await complaint.save();
+
+    // Create notification for the citizen
+    const { createNotification } = require('../utils/notificationService');
+    const sendEmail = require('../utils/emailService');
+
+    const notificationMessage = `Your complaint "${complaint.title}" status has been updated from "${oldStatus}" to "${newStatus}"${remarkText ? ` with remark: "${remarkText}"` : ''}.`;
+
+    await createNotification(complaint.user._id, notificationMessage, complaintId);
+
+    // Send email notification
+    try {
+        const emailHtml = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #FF9933 0%, #FF6600 100%); padding: 20px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">CivicResolve</h1>
+                    <p style="color: white; margin: 5px 0 0 0; font-size: 14px;">Complaint Status Update</p>
+                </div>
+                <div style="padding: 30px; background: #f9f9f9;">
+                    <h2 style="color: #333;">Hello ${complaint.user.name},</h2>
+                    <p style="color: #666; line-height: 1.6;">Your complaint has been updated by our team.</p>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="color: #FF9933; margin-top: 0;">Complaint Details</h3>
+                        <p style="margin: 10px 0;"><strong>Title:</strong> ${complaint.title}</p>
+                        <p style="margin: 10px 0;"><strong>ID:</strong> #${complaint._id.toString().slice(-6)}</p>
+                        <p style="margin: 10px 0;"><strong>Previous Status:</strong> <span style="color: #999;">${oldStatus}</span></p>
+                        <p style="margin: 10px 0;"><strong>New Status:</strong> <span style="color: #FF9933; font-weight: bold;">${newStatus}</span></p>
+                        ${remarkText ? `<p style="margin: 10px 0;"><strong>Official Remark:</strong> "${remarkText}"</p>` : ''}
+                    </div>
+                    
+                    <p style="color: #666; line-height: 1.6;">Thank you for using CivicResolve. We're working hard to address your concerns.</p>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/citizen/complaint/${complaintId}" 
+                           style="background: #FF9933; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block;">
+                            View Complaint Details
+                        </a>
+                    </div>
+                </div>
+                <div style="background: #333; padding: 20px; text-align: center; color: #999; font-size: 12px;">
+                    <p>© 2026 CivicResolve. All rights reserved.</p>
+                </div>
+            </div>
+        `;
+
+        await sendEmail({
+            email: complaint.user.email,
+            subject: `Complaint Status Updated: ${newStatus} - CivicResolve`,
+            html: emailHtml
+        });
+
+        console.log(`✅ Email sent to ${complaint.user.email} for complaint ${complaintId}`);
+    } catch (emailError) {
+        console.error('❌ Failed to send email:', emailError.message);
+        // Don't throw error - notification still created
+    }
+
     return complaint;
 };
 
@@ -118,11 +183,15 @@ const getDepartmentAnalytics = async (officialId) => {
     const official = await User.findById(officialId);
     const department = official.department;
 
+    console.log(`[Analytics] Official: ${official.name}, Department: ${department}`);
+
     // 1. Status Breakdown
     const statusStats = await Complaint.aggregate([
         { $match: { category: department } },
         { $group: { _id: '$currentStatus', count: { $sum: 1 } } }
     ]);
+
+    console.log(`[Analytics] Status Stats:`, statusStats);
 
     // 2. Complaint Volume (Monthly Trend - Last 6 Months)
     const sixMonthsAgo = new Date();
@@ -173,19 +242,33 @@ const getDepartmentAnalytics = async (officialId) => {
     });
     const slaCompliance = resolvedComplaints.length ? ((slaCompliantCount / resolvedComplaints.length) * 100).toFixed(1) : 0;
 
-    // Helper to format breakdown for frontend
-    const breakdown = statusStats.map(s => ({ _id: s._id.toUpperCase().replace(' ', '_'), count: s.count }));
 
-    // Fill specific statuses if missing for frontend array consistency
-    const ensureStatus = (status) => {
-        if (!breakdown.find(b => b._id === status)) breakdown.push({ _id: status, count: 0 });
-    };
-    ['RESOLVED', 'PENDING', 'IN_PROGRESS', 'REJECTED'].forEach(ensureStatus);
+    // Helper to format breakdown for frontend
+    const breakdown = {};
+    statusStats.forEach(s => {
+        breakdown[s._id] = s.count;
+    });
+
+    // Ensure all expected statuses exist with 0 if missing
+    const expectedStatuses = ['Pending', 'In Progress', 'Resolved', 'Rejected', 'Escalated'];
+    expectedStatuses.forEach(status => {
+        if (!breakdown[status]) {
+            breakdown[status] = 0;
+        }
+    });
+
+
+    // Calculate total count
+    const total = await Complaint.countDocuments({ category: department });
+
+    console.log(`[Analytics] Total complaints for ${department}: ${total}`);
+    console.log(`[Analytics] Breakdown:`, breakdown);
 
     return {
-        // Backend returns standard snake_case or camelCase, frontend maps it
+        total, // Total complaints for this department
+        breakdown, // Status breakdown object
         complaintVolume: volumeStats,
-        resolutionStatus: breakdown,
+        resolutionStatus: breakdown, // Keep for backward compatibility
         slaCompliance,
         heatmapData: heatmapData.map(c => ({
             id: c._id,

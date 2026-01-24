@@ -1,18 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { HiDocumentText } from 'react-icons/hi2';
+import { HiDocumentText, HiBell } from 'react-icons/hi2';
 
 export const NavBar = () => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  // Fetch notifications
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  const fetchNotifications = async () => {
+    try {
+      const endpoint = user.role === 'citizen' ? '/api/citizen/notifications' : '/api/official/notifications';
+      const res = await fetch(endpoint, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.notifications?.filter(n => !n.isRead).length || 0);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    }
+  };
+
+  const markAsRead = async (notificationId) => {
+    try {
+      const endpoint = user.role === 'citizen' 
+        ? `/api/citizen/notifications/${notificationId}/read`
+        : `/api/official/notifications/${notificationId}/read`;
+      
+      await fetch(endpoint, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      
+      fetchNotifications();
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
 
   const handleLogout = () => {
     setShowLogoutModal(false);
@@ -31,7 +77,7 @@ export const NavBar = () => {
           </div>
         </div>
 
-        {/* Navigation Buttons */}
+        {/* Navigation Buttons - Reorganized: Notification → Profile → Logout → Theme */}
         <div style={styles.actions}>
           {user ? (
             <>
@@ -40,6 +86,59 @@ export const NavBar = () => {
                   <HiDocumentText style={{ display: 'inline', marginRight: '4px', fontSize: '1.1em', verticalAlign: 'text-bottom' }} />File Complaint
                 </button>
               )}
+              
+              {/* Notification Bell */}
+              <div style={styles.notificationContainer}>
+                <button 
+                  onClick={() => setShowNotifications(!showNotifications)} 
+                  style={styles.notificationBtn}
+                  title="Notifications"
+                >
+                  <HiBell style={{ fontSize: '1.25rem' }} />
+                  {unreadCount > 0 && (
+                    <span style={styles.badge}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+                  )}
+                </button>
+                
+                {/* Notification Dropdown */}
+                {showNotifications && (
+                  <div style={styles.notificationDropdown}>
+                    <div style={styles.notificationHeader}>
+                      <h4 style={styles.notificationTitle}>Notifications</h4>
+                      <span style={styles.notificationCount}>{unreadCount} unread</span>
+                    </div>
+                    <div style={styles.notificationList}>
+                      {notifications.length === 0 ? (
+                        <div style={styles.emptyNotifications}>No notifications</div>
+                      ) : (
+                        notifications.slice(0, 10).map(notif => (
+                          <div 
+                            key={notif._id} 
+                            style={{
+                              ...styles.notificationItem,
+                              background: notif.isRead ? 'transparent' : 'var(--bg-secondary)'
+                            }}
+                            onClick={() => {
+                              markAsRead(notif._id);
+                              if (notif.complaint) {
+                                navigate(`/${user.role}/complaint/${notif.complaint}`);
+                                setShowNotifications(false);
+                              }
+                            }}
+                          >
+                            <div style={styles.notificationMessage}>{notif.message}</div>
+                            <div style={styles.notificationTime}>
+                              {new Date(notif.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Profile */}
               <div style={styles.profileContainer} onClick={() => navigate(`/${user.role}/profile`)}>
                 <img
                   src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name}&background=random`}
@@ -47,22 +146,22 @@ export const NavBar = () => {
                   style={styles.profileImage}
                 />
               </div>
+              
+              {/* Logout */}
               <button onClick={() => setShowLogoutModal(true)} className="btn-gradient-ghost" style={styles.logoutBtn}>Logout</button>
+              
+              {/* Theme Toggle */}
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                style={styles.themeToggle}
+                title="Toggle theme"
+              >
+                {theme === "dark" ? "🌙" : "☀️"}
+              </button>
             </>
           ) : (
             <button onClick={() => navigate("/citizen/login")} className="btn-gradient-primary" style={styles.loginBtn}>Login</button>
           )}
-
-          {user && (user.role === 'admin' || user.role === 'official') && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              style={styles.themeToggle}
-              title="Toggle theme"
-            >
-              {theme === "dark" ? "🌙" : "☀️"}
-            </button>
-          )}
-
         </div>
       </nav>
 
@@ -211,6 +310,99 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: "all 0.2s ease",
+  },
+
+  // Notification Styles
+  notificationContainer: {
+    position: 'relative',
+  },
+  notificationBtn: {
+    padding: '0.5rem 0.75rem',
+    borderRadius: '8px',
+    border: '1px solid var(--border)',
+    background: 'var(--bg)',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    transition: "all 0.2s ease",
+    color: 'var(--text)',
+  },
+  badge: {
+    position: 'absolute',
+    top: '-4px',
+    right: '-4px',
+    background: '#ef4444',
+    color: 'white',
+    borderRadius: '10px',
+    padding: '2px 6px',
+    fontSize: '10px',
+    fontWeight: '700',
+    minWidth: '18px',
+    textAlign: 'center',
+  },
+  notificationDropdown: {
+    position: 'absolute',
+    top: 'calc(100% + 8px)',
+    right: 0,
+    width: '360px',
+    maxHeight: '500px',
+    background: 'var(--card)',
+    border: '1px solid var(--border)',
+    borderRadius: '12px',
+    boxShadow: 'var(--shadow-lg)',
+    zIndex: 1000,
+    overflow: 'hidden',
+  },
+  notificationHeader: {
+    padding: '16px',
+    borderBottom: '1px solid var(--border)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  notificationTitle: {
+    margin: 0,
+    fontSize: '16px',
+    fontWeight: '700',
+    color: 'var(--text)',
+  },
+  notificationCount: {
+    fontSize: '12px',
+    color: 'var(--muted)',
+    background: 'var(--bg-secondary)',
+    padding: '4px 8px',
+    borderRadius: '12px',
+  },
+  notificationList: {
+    maxHeight: '400px',
+    overflowY: 'auto',
+  },
+  notificationItem: {
+    padding: '12px 16px',
+    borderBottom: '1px solid var(--border)',
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+    ':hover': {
+      background: 'var(--bg-secondary)',
+    },
+  },
+  notificationMessage: {
+    fontSize: '14px',
+    color: 'var(--text)',
+    marginBottom: '4px',
+    lineHeight: '1.4',
+  },
+  notificationTime: {
+    fontSize: '12px',
+    color: 'var(--muted)',
+  },
+  emptyNotifications: {
+    padding: '40px 20px',
+    textAlign: 'center',
+    color: 'var(--muted)',
+    fontSize: '14px',
   },
 
   // Modal Styles

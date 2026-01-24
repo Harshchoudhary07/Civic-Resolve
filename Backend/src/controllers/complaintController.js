@@ -99,9 +99,29 @@ const createComplaint = async (req, res, next) => {
       description,
       location: locationData,
       attachments,
-      currentStatus: 'SUBMITTED', // Initial status as per requirement
+      currentStatus: 'Pending', // Initial status as per requirement
     });
     console.log('Complaint successfully created in DB:', complaint._id);
+
+    // Notify officials of the department about new complaint
+    try {
+      const { createNotification } = require('../utils/notificationService');
+
+      // Find all officials in this department
+      const officials = await User.find({ role: 'official', department: category, isActive: true });
+
+      const notificationMessage = `New complaint filed in ${category}: "${title}"`;
+
+      for (const official of officials) {
+        await createNotification(official._id, notificationMessage, complaint._id);
+      }
+
+      console.log(`✅ Notified ${officials.length} officials about new complaint`);
+    } catch (notifError) {
+      console.error('❌ Failed to create notifications:', notifError.message);
+      // Don't throw - complaint was created successfully
+    }
+
 
     // 5. Response Contract
     res.status(201).json({
@@ -196,10 +216,10 @@ const updateComplaintStatus = async (req, res, next) => {
       return next(error);
     }
 
-    complaint.status = status;
+    complaint.currentStatus = status;
     // Auto assign to updater if not assigned?
     if (!complaint.assignedTo) {
-        complaint.assignedTo = req.user.id;
+      complaint.assignedTo = req.user.id;
     }
 
     await complaint.save();
@@ -222,9 +242,9 @@ const updateComplaintStatus = async (req, res, next) => {
 const getComplaintSummary = async (req, res, next) => {
   try {
     const total = await Complaint.countDocuments();
-    const pending = await Complaint.countDocuments({ currentStatus: 'SUBMITTED' });
-    const inProgress = await Complaint.countDocuments({ currentStatus: 'IN_PROGRESS' });
-    const resolved = await Complaint.countDocuments({ currentStatus: 'RESOLVED' });
+    const pending = await Complaint.countDocuments({ currentStatus: 'Pending' });
+    const inProgress = await Complaint.countDocuments({ currentStatus: 'In Progress' });
+    const resolved = await Complaint.countDocuments({ currentStatus: 'Resolved' });
 
     res.status(200).json({
       total,
