@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { HiChartBar, HiClipboardDocumentList, HiFire, HiClock } from 'react-icons/hi2';
+import { MdLocationOn } from 'react-icons/md';
+import { FaThumbsUp } from 'react-icons/fa';
 
 export default function OfficialDashboard() {
   const { user } = useAuth();
@@ -105,12 +107,12 @@ export default function OfficialDashboard() {
                     </div>
                     <h4 style={styles.cardTitle}>{complaint.title}</h4>
                     <div style={styles.cardMeta}>
-                      <span>📍 {complaint.location?.address?.split(',')[0]}</span>
+                      <span><MdLocationOn style={{ marginRight: '4px', display: 'inline' }} />{complaint.location?.address?.split(',')[0]}</span>
                       <span><HiClock style={{ verticalAlign: 'middle' }} /> {new Date(complaint.createdAt).toLocaleDateString()}</span>
                     </div>
                     <div style={styles.cardFooter}>
                       <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{complaint.currentStatus}</span>
-                      <span style={styles.metric}>👍 {complaint.upvoteCount} votes</span>
+                      <span style={styles.metric}><FaThumbsUp style={{ marginRight: '4px', display: 'inline' }} />{complaint.upvoteCount} votes</span>
                     </div>
                   </div>
                 </Link>

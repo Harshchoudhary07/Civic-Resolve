@@ -9,6 +9,8 @@ import {
   HiExclamationTriangle,
   HiCamera
 } from 'react-icons/hi2';
+import { FaCamera, FaLightbulb, FaBolt, FaTree, FaTrash, FaRoad, FaTint, FaExclamationTriangle as FaSiren, FaClock } from 'react-icons/fa';
+import { MdLocationOn } from 'react-icons/md';
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 
 // Google Maps configuration
@@ -177,8 +179,8 @@ export default function FileComplaint() {
     setError("");
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
             facingMode: 'environment', // Prefer back camera on mobile
             width: { ideal: 1280 },
             height: { ideal: 720 }
@@ -313,12 +315,12 @@ export default function FileComplaint() {
                     required
                   >
                     <option value="">Choose a category...</option>
-                    <option value="Roads & Infrastructure">🛣️ Roads & Infrastructure</option>
-                    <option value="Water Supply">💧 Water Supply</option>
-                    <option value="Sanitation & Garbage">🗑️ Sanitation & Garbage</option>
-                    <option value="Electricity">⚡ Electricity</option>
-                    <option value="Public Safety">🚨 Public Safety</option>
-                    <option value="Parks & Recreation">🌳 Parks & Recreation</option>
+                    <option value="Roads & Infrastructure">Roads & Infrastructure</option>
+                    <option value="Water Supply">Water Supply</option>
+                    <option value="Sanitation & Garbage">Sanitation & Garbage</option>
+                    <option value="Electricity">Electricity</option>
+                    <option value="Public Safety">Public Safety</option>
+                    <option value="Parks & Recreation">Parks & Recreation</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
@@ -359,7 +361,7 @@ export default function FileComplaint() {
               {/* Location Card */}
               <div style={styles.card}>
                 <div style={styles.cardHeader}>
-                  <span style={styles.cardIcon}>📍</span>
+                  <span style={styles.cardIcon}><MdLocationOn /></span>
                   <h3 style={styles.cardTitle}>Location</h3>
                 </div>
                 <div style={styles.group}>
@@ -429,7 +431,7 @@ export default function FileComplaint() {
               {/* Evidence Card */}
               <div style={styles.card}>
                 <div style={styles.cardHeader}>
-                  <span style={styles.cardIcon}>📸</span>
+                  <span style={styles.cardIcon}><FaCamera /></span>
                   <h3 style={styles.cardTitle}>Evidence *</h3>
                 </div>
                 <div style={styles.group}>
@@ -469,7 +471,7 @@ export default function FileComplaint() {
 
                   {!stream && !mediaFile && (
                     <button type="button" onClick={handleStartCamera} style={styles.mediaBtn}>
-                      <span style={styles.mediaBtnIcon}>📸</span>
+                      <span style={styles.mediaBtnIcon}><FaCamera /></span>
                       <span style={styles.mediaBtnText}>Take Live Picture or Video</span>
                     </button>
                   )}
@@ -536,29 +538,29 @@ export default function FileComplaint() {
             </div>
 
             <div style={styles.infoCard}>
-              <h3 style={styles.infoTitle}>⏱️ Estimated Resolution Time</h3>
+              <h3 style={styles.infoTitle}><FaClock style={{ display: 'inline', marginRight: '8px' }} />Estimated Resolution Time</h3>
               <div style={styles.estimateList}>
                 <div style={styles.estimateItem}>
-                  <span style={styles.estimateCategory}>🛣️ Roads & Infrastructure</span>
+                  <span style={styles.estimateCategory}><FaRoad style={{ marginRight: '6px' }} />Roads & Infrastructure</span>
                   <span style={styles.estimateTime}>7-14 days</span>
                 </div>
                 <div style={styles.estimateItem}>
-                  <span style={styles.estimateCategory}>💧 Water Supply</span>
+                  <span style={styles.estimateCategory}><FaTint style={{ marginRight: '6px' }} />Water Supply</span>
                   <span style={styles.estimateTime}>2-5 days</span>
                 </div>
                 <div style={styles.estimateItem}>
-                  <span style={styles.estimateCategory}>⚡ Electricity</span>
+                  <span style={styles.estimateCategory}><FaBolt style={{ marginRight: '6px' }} />Electricity</span>
                   <span style={styles.estimateTime}>1-3 days</span>
                 </div>
                 <div style={styles.estimateItem}>
-                  <span style={styles.estimateCategory}>🚨 Public Safety</span>
+                  <span style={styles.estimateCategory}><FaSiren style={{ marginRight: '6px' }} />Public Safety</span>
                   <span style={styles.estimateTime}>Immediate</span>
                 </div>
               </div>
             </div>
 
             <div style={styles.helpBox}>
-              <span style={styles.helpIcon}>💡</span>
+              <span style={styles.helpIcon}><FaLightbulb /></span>
               <div>
                 <h4 style={styles.helpTitle}>Need Help?</h4>
                 <p style={styles.helpText}>Call our helpline: <strong>1800-XXX-XXXX</strong></p>

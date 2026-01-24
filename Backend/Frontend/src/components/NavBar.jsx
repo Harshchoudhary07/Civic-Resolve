@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { HiDocumentText, HiBell } from 'react-icons/hi2';
+import { FaLandmark, FaUser, FaKey, FaDoorOpen } from 'react-icons/fa';
 import GiveFeedbackModal from './GiveFeedbackModal'; // Add import
 
 export const NavBar = () => {
@@ -34,10 +35,10 @@ export const NavBar = () => {
       // Listen for new notifications
       socket.on('notification', (notification) => {
         console.log('📢 New notification received:', notification);
-        
+
         // Add to notifications list
         setNotifications(prev => [notification, ...prev]);
-        
+
         // Only increment unread count if notification is unread
         if (!notification.isRead) {
           setUnreadCount(prev => prev + 1);
@@ -68,15 +69,15 @@ export const NavBar = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      const endpoint = user.role === 'citizen' 
+      const endpoint = user.role === 'citizen'
         ? `/api/citizen/notifications/${notificationId}/read`
         : `/api/official/notifications/${notificationId}/read`;
-      
+
       await fetch(endpoint, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      
+
       fetchNotifications();
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
@@ -87,19 +88,19 @@ export const NavBar = () => {
     try {
       // Mark all unread notifications as read
       const unreadNotifications = notifications.filter(n => !n.isRead);
-      
+
       if (unreadNotifications.length === 0) return;
-      
+
       // Use bulk endpoint for better performance
-      const endpoint = user.role === 'citizen' 
+      const endpoint = user.role === 'citizen'
         ? '/api/citizen/notifications/mark-all-read'
         : '/api/official/notifications/mark-all-read';
-      
+
       const response = await fetch(endpoint, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      
+
       if (response.ok) {
         // Update local state immediately
         setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
@@ -113,7 +114,7 @@ export const NavBar = () => {
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
-    
+
     // Mark all as read when opening the dropdown
     if (!showNotifications && unreadCount > 0) {
       markAllAsRead();
@@ -130,7 +131,7 @@ export const NavBar = () => {
       <nav style={styles.nav}>
         {/* Government Logo & App Name */}
         <div style={styles.logoSection} onClick={() => navigate("/")}>
-          <div style={styles.emblem}>🏛️</div>
+          <div style={styles.emblem}><FaLandmark /></div>
           <div style={styles.logoText}>
             <div style={styles.appName}>CivicResolve</div>
             <div style={styles.tagline}>Complaint Portal</div>
@@ -146,10 +147,10 @@ export const NavBar = () => {
                   <HiDocumentText style={{ display: 'inline', marginRight: '4px', fontSize: '1.1em', verticalAlign: 'text-bottom' }} />File Complaint
                 </button>
               )} */}
-              
+
               {/* Notification Bell */}
               <div style={styles.notificationContainer}>
-                <button 
+                <button
                   onClick={handleNotificationClick}
                   style={styles.notificationBtn}
                   title="Notifications"
@@ -159,7 +160,7 @@ export const NavBar = () => {
                     <span style={styles.badge}>{unreadCount > 9 ? '9+' : unreadCount}</span>
                   )}
                 </button>
-                
+
                 {/* Notification Dropdown */}
                 {showNotifications && (
                   <div style={styles.notificationDropdown}>
@@ -172,8 +173,8 @@ export const NavBar = () => {
                         <div style={styles.emptyNotifications}>No notifications</div>
                       ) : (
                         notifications.slice(0, 10).map(notif => (
-                          <div 
-                            key={notif._id} 
+                          <div
+                            key={notif._id}
                             style={{
                               ...styles.notificationItem,
                               background: notif.isRead ? 'transparent' : 'var(--bg-secondary)'
@@ -206,9 +207,9 @@ export const NavBar = () => {
               >
                 {theme === "dark" ? "🌙" : "☀️"}
               </button>
-              
+
               {/* Profile Dropdown - Rightmost */}
-              <div 
+              <div
                 style={styles.profileDropdownContainer}
                 onMouseEnter={() => setShowProfileDropdown(true)}
                 onMouseLeave={() => setShowProfileDropdown(false)}
@@ -220,7 +221,7 @@ export const NavBar = () => {
                     style={styles.profileImage}
                   />
                 </div>
-                
+
                 {/* Profile Dropdown Menu */}
                 {showProfileDropdown && (
                   <div style={styles.profileDropdown}>
@@ -236,7 +237,7 @@ export const NavBar = () => {
                       }}
                       style={styles.profileDropdownItem}
                     >
-                      👤 View Profile
+                      <FaUser style={{ marginRight: '8px' }} />View Profile
                     </button>
                     <button
                       onClick={() => {
@@ -245,7 +246,7 @@ export const NavBar = () => {
                       }}
                       style={styles.profileDropdownItem}
                     >
-                      🔑 Change Password
+                      <FaKey style={{ marginRight: '8px' }} />Change Password
                     </button>
                     <div style={styles.profileDropdownDivider}></div>
                     <button
@@ -253,9 +254,9 @@ export const NavBar = () => {
                         setShowProfileDropdown(false);
                         setShowLogoutModal(true);
                       }}
-                      style={{...styles.profileDropdownItem, ...styles.profileDropdownLogout}}
+                      style={{ ...styles.profileDropdownItem, ...styles.profileDropdownLogout }}
                     >
-                      🚪 Logout
+                      <FaDoorOpen style={{ marginRight: '8px' }} />Logout
                     </button>
                   </div>
                 )}

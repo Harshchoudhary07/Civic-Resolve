@@ -101,3 +101,30 @@ exports.getBasicProfile = (req, res) => {
     },
   });
 };
+
+/**
+ * @desc    Get a specific complaint by ID
+ * @route   GET /api/citizen/complaints/:id
+ * @access  Private (Citizen)
+ */
+exports.getComplaintById = async (req, res, next) => {
+  try {
+    const complaint = await Complaint.findById(req.params.id)
+      .populate('user', 'name email profilePicture')
+      .populate('statusHistory.updatedBy', 'name role')
+      .populate('remarks.official', 'name');
+
+    if (!complaint) {
+      return res.status(404).json({ success: false, message: 'Complaint not found' });
+    }
+
+    // Verify the complaint belongs to the requesting user
+    if (complaint.user._id.toString() !== req.user.id.toString()) {
+      return res.status(403).json({ success: false, message: 'Not authorized to view this complaint' });
+    }
+
+    res.status(200).json({ success: true, complaint });
+  } catch (error) {
+    next(error);
+  }
+};

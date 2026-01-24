@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { HiMapPin, HiCalendar, HiFolder } from 'react-icons/hi2';
+import { FaComment, FaLock } from 'react-icons/fa';
 
 import GiveFeedbackModal from '../../components/GiveFeedbackModal';
 
@@ -11,11 +12,50 @@ export default function ComplaintDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // ... (useEffect remains same) ...
+  useEffect(() => {
+    const fetchComplaintDetails = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/citizen/complaints/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch complaint details');
+        }
+
+        const data = await res.json();
+        setComplaint(data.complaint || data);
+      } catch (err) {
+        console.error('Error fetching complaint:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchComplaintDetails();
+    }
+  }, [id]);
 
   const handleFeedbackClick = () => {
     if (complaint.currentStatus === 'Resolved') {
       setShowFeedbackModal(true);
+    }
+  };
+
+  const getStatusBadgeStyle = (status) => {
+    switch (status) {
+      case 'Resolved':
+        return styles.statusResolved;
+      case 'In Progress':
+        return styles.statusInProgress;
+      case 'Rejected':
+        return styles.statusRejected;
+      default:
+        return { background: '#fef3c7', color: '#b45309' }; // Pending/default
     }
   };
 
@@ -34,14 +74,14 @@ export default function ComplaintDetails() {
           {complaint.currentStatus}
         </span>
       </div>
-      
+
       <div style={styles.card}>
         <h3>{complaint.title}</h3>
         <p style={styles.desc}>{complaint.description}</p>
         <div style={styles.meta}>
-          <span><HiMapPin style={{display: 'inline', marginRight: '4px'}} />{complaint.location.address}</span>
-          <span><HiCalendar style={{display: 'inline', marginRight: '4px'}} />{new Date(complaint.createdAt).toLocaleDateString()}</span>
-          <span><HiFolder style={{display: 'inline', marginRight: '4px'}} />{complaint.category}</span>
+          <span><HiMapPin style={{ display: 'inline', marginRight: '4px' }} />{complaint.location.address}</span>
+          <span><HiCalendar style={{ display: 'inline', marginRight: '4px' }} />{new Date(complaint.createdAt).toLocaleDateString()}</span>
+          <span><HiFolder style={{ display: 'inline', marginRight: '4px' }} />{complaint.category}</span>
         </div>
         {complaint.attachments && complaint.attachments.length > 0 ? (
           <div style={styles.attachmentsGrid}>
@@ -88,27 +128,27 @@ export default function ComplaintDetails() {
         <h3>Feedback</h3>
         <div style={styles.feedbackCard}>
           <p style={styles.feedbackText}>
-            {complaint.currentStatus === 'Resolved' 
+            {complaint.currentStatus === 'Resolved'
               ? "Your complaint is resolved. Please share your experience to help us improve."
               : "Feedback can be provided once the complaint is resolved."}
           </p>
-          <button 
+          <button
             style={{
-              ...styles.btn, 
+              ...styles.btn,
               opacity: complaint.currentStatus === 'Resolved' ? 1 : 0.6,
               cursor: complaint.currentStatus === 'Resolved' ? 'pointer' : 'not-allowed'
-            }} 
+            }}
             onClick={handleFeedbackClick}
             disabled={complaint.currentStatus !== 'Resolved'}
           >
-            {complaint.currentStatus === 'Resolved' ? '💬 Give Feedback' : '🔒 Locked'}
+            {complaint.currentStatus === 'Resolved' ? <><FaComment style={{ marginRight: '6px' }} />Give Feedback</> : <><FaLock style={{ marginRight: '6px' }} />Locked</>}
           </button>
         </div>
       </div>
 
-      <GiveFeedbackModal 
-        isOpen={showFeedbackModal} 
-        onClose={() => setShowFeedbackModal(false)} 
+      <GiveFeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
       />
     </div>
   );

@@ -69,7 +69,7 @@ export default function CitizenHome() {
   // Sort feed based on selected filter
   const sortedFeed = React.useMemo(() => {
     if (!feed || feed.length === 0) return [];
-    
+
     const sorted = [...feed];
     if (sortBy === 'priority') {
       // Sort by upvotes (descending)
@@ -122,7 +122,7 @@ export default function CitizenHome() {
                   ...(sortBy === 'newest' ? styles.toggleButtonActive : {})
                 }}
               >
-                <HiSparkles style={{display: 'inline', marginRight: '4px'}} />Newest
+                <HiSparkles style={{ display: 'inline', marginRight: '4px' }} />Newest
               </button>
               <button
                 onClick={() => setSortBy('priority')}
@@ -131,7 +131,7 @@ export default function CitizenHome() {
                   ...(sortBy === 'priority' ? styles.toggleButtonActive : {})
                 }}
               >
-                <HiFire style={{display: 'inline', marginRight: '4px'}} />Priority
+                <HiFire style={{ display: 'inline', marginRight: '4px' }} />Priority
               </button>
             </div>
           </div>
@@ -144,8 +144,8 @@ export default function CitizenHome() {
               </Link>
             </div>
             <div style={styles.createPostActions}>
-              <Link to="/citizen/file-complaint" style={styles.createAction}><HiCamera style={{display: 'inline', marginRight: '4px'}} />Photo</Link>
-              <Link to="/citizen/file-complaint" style={styles.createAction}><HiLocationMarker style={{display: 'inline', marginRight: '4px'}} />Location</Link>
+              <Link to="/citizen/file-complaint" style={styles.createAction}><HiCamera style={{ display: 'inline', marginRight: '4px' }} />Photo</Link>
+              <Link to="/citizen/file-complaint" style={styles.createAction}><HiLocationMarker style={{ display: 'inline', marginRight: '4px' }} />Location</Link>
             </div>
           </div>
 
@@ -273,10 +273,8 @@ const styles = {
   layoutGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 300px",
-    gap: "24px",
-    "@media (max-width: 800px)": {
-      gridTemplateColumns: "1fr"
-    }
+    gap: "24px"
+    // Note: Media queries don't work in inline styles. Use CSS classes or window.matchMedia for responsive design.
   },
   mainColumn: {
     display: "flex",
@@ -487,7 +485,7 @@ const styles = {
   miniStat: {
     flex: 1,
     textAlign: "center",
-    borderRight: "1px solid var(--border)",
+    borderRight: "1px solid var(--border)"
   },
   miniStatValue: {
     display: "block",
@@ -536,8 +534,8 @@ const styles = {
     textDecoration: "none",
     fontSize: "14px",
     fontWeight: "500",
-    transition: "background 0.2s",
-    ":hover": { background: "var(--bg-secondary)" }
+    transition: "background 0.2s"
+    // Note: :hover doesn't work in inline styles. Use onMouseEnter/onMouseLeave or CSS classes.
   },
   iconWrapper: {
     fontSize: "18px",
@@ -549,8 +547,8 @@ const styles = {
     padding: "12px",
     background: "var(--bg-secondary)",
     borderRadius: "8px",
-    marginBottom: "12px",
-    "&:last-child": { marginBottom: 0 }
+    marginBottom: "12px"
+    // Note: &:last-child doesn't work in inline styles. Handle this in the component logic if needed.
   },
   miniAnnounceTitle: {
     fontSize: "13px",

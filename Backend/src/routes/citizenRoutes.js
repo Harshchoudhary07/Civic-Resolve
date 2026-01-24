@@ -8,6 +8,7 @@ const {
   markNotificationAsRead,
   markAllNotificationsAsRead,
   getBasicProfile,
+  getComplaintById,
 } = require('../controllers/citizenController');
 
 // All routes in this file are protected and for the 'citizen' role
@@ -15,6 +16,7 @@ router.use(protect, authorize('citizen'));
 
 router.get('/dashboard', getDashboardSummary);
 router.get('/complaints/recent', getRecentComplaints);
+router.get('/complaints/:id', getComplaintById);
 router.get('/profile/basic', getBasicProfile);
 
 router.get('/notifications', getNotifications);

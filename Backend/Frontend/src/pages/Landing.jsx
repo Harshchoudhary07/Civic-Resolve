@@ -2,14 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState, useRef } from "react";
 import "../styles/landing-animations.css";
-import { 
-  HiBuildingLibrary, 
-  HiRocketLaunch, 
-  HiDocumentText, 
-  HiArrowPath, 
-  HiChartBar, 
-  HiCheckCircle, 
-  HiLockClosed, 
+import {
+  HiBuildingLibrary,
+  HiRocketLaunch,
+  HiDocumentText,
+  HiArrowPath,
+  HiChartBar,
+  HiCheckCircle,
+  HiLockClosed,
   HiBolt,
   HiUserGroup,
   HiClock,
@@ -20,6 +20,8 @@ import {
   HiChatBubbleLeftRight,
   HiChevronDown
 } from 'react-icons/hi2';
+import { FaTimesCircle, FaHardHat, FaLightbulb, FaTrash, FaTint } from 'react-icons/fa';
+import { MdLocationOn } from 'react-icons/md';
 
 export default function Landing() {
   const { user } = useAuth();
@@ -151,7 +153,7 @@ export default function Landing() {
         <div style={styles.heroContent}>
           {/* Government Emblem with parallax */}
           <div style={styles.emblem}>
-            <div 
+            <div
               style={{
                 ...styles.emblemCircle,
                 transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`,
@@ -223,10 +225,10 @@ export default function Landing() {
           <p style={styles.sectionSubtitle}>
             Traditional complaint systems are broken. We're fixing them with technology and transparency.
           </p>
-          
+
           <div style={styles.comparisonGrid}>
             <div className="card-gradient-hover card-hover" style={styles.comparisonCard}>
-              <div style={styles.comparisonBadge}>❌ Old System</div>
+              <div style={styles.comparisonBadge}><FaTimesCircle style={{ marginRight: '6px' }} />Old System</div>
               <h3 style={styles.comparisonTitle}>The Problem</h3>
               <ul style={styles.problemList}>
                 <li>Complaints get lost in bureaucracy</li>
@@ -389,50 +391,50 @@ export default function Landing() {
 
           <div style={styles.useCaseGrid}>
             <div className="card-gradient-hover card-hover" style={styles.useCaseCard}>
-              <div style={styles.useCaseEmoji} className="use-case-emoji">🚧</div>
+              <div style={styles.useCaseEmoji} className="use-case-emoji"><FaHardHat /></div>
               <h3 style={styles.useCaseTitle}>Road Damage</h3>
               <p style={styles.useCaseText}>
                 "A pothole on Main Street was causing accidents. I filed a complaint with photos. Within 3 days, it was assigned to the PWD. The road was repaired in 7 days with photo proof."
               </p>
               <div style={styles.useCaseMeta}>
-                <span>✓ Resolved in 7 days</span>
-                <span>📍 Mumbai, Maharashtra</span>
+                <span><HiCheckCircle style={{ marginRight: '4px', display: 'inline' }} />Resolved in 7 days</span>
+                <span><MdLocationOn style={{ marginRight: '4px', display: 'inline' }} />Mumbai, Maharashtra</span>
               </div>
             </div>
 
             <div className="card-gradient-hover card-hover" style={styles.useCaseCard}>
-              <div style={styles.useCaseEmoji} className="use-case-emoji">💧</div>
+              <div style={styles.useCaseEmoji} className="use-case-emoji"><FaTint /></div>
               <h3 style={styles.useCaseTitle}>Water Supply Issue</h3>
               <p style={styles.useCaseText}>
                 "Our locality had no water for 5 days. I raised a complaint, and it was escalated to the water board. They fixed the pipeline leak and restored supply within 48 hours."
               </p>
               <div style={styles.useCaseMeta}>
-                <span>✓ Resolved in 2 days</span>
-                <span>📍 Bangalore, Karnataka</span>
+                <span><HiCheckCircle style={{ marginRight: '4px', display: 'inline' }} />Resolved in 2 days</span>
+                <span><MdLocationOn style={{ marginRight: '4px', display: 'inline' }} />Bangalore, Karnataka</span>
               </div>
             </div>
 
             <div className="card-gradient-hover card-hover" style={styles.useCaseCard}>
-              <div style={styles.useCaseEmoji} className="use-case-emoji">💡</div>
+              <div style={styles.useCaseEmoji} className="use-case-emoji"><FaLightbulb /></div>
               <h3 style={styles.useCaseTitle}>Street Light Outage</h3>
               <p style={styles.useCaseText}>
                 "Dark streets were unsafe at night. Filed a complaint about non-functional street lights. The electrical department responded same day and replaced all bulbs within 24 hours."
               </p>
               <div style={styles.useCaseMeta}>
-                <span>✓ Resolved in 1 day</span>
-                <span>📍 Delhi NCR</span>
+                <span><HiCheckCircle style={{ marginRight: '4px', display: 'inline' }} />Resolved in 1 day</span>
+                <span><MdLocationOn style={{ marginRight: '4px', display: 'inline' }} />Delhi NCR</span>
               </div>
             </div>
 
             <div className="card-gradient-hover card-hover" style={styles.useCaseCard}>
-              <div style={styles.useCaseEmoji} className="use-case-emoji">🗑️</div>
+              <div style={styles.useCaseEmoji} className="use-case-emoji"><FaTrash /></div>
               <h3 style={styles.useCaseTitle}>Garbage Collection</h3>
               <p style={styles.useCaseText}>
                 "Overflowing bins were creating health hazards. Submitted complaint with location. Sanitation team cleared the area and set up a regular collection schedule."
               </p>
               <div style={styles.useCaseMeta}>
-                <span>✓ Resolved in 3 days</span>
-                <span>📍 Pune, Maharashtra</span>
+                <span><HiCheckCircle style={{ marginRight: '4px', display: 'inline' }} />Resolved in 3 days</span>
+                <span><MdLocationOn style={{ marginRight: '4px', display: 'inline' }} />Pune, Maharashtra</span>
               </div>
             </div>
           </div>
@@ -485,8 +487,8 @@ export default function Landing() {
           <div style={styles.faqContainer}>
             {faqData.map((faq, index) => (
               <div key={index} style={styles.faqItem}>
-                <button 
-                  onClick={() => toggleFaq(index)} 
+                <button
+                  onClick={() => toggleFaq(index)}
                   style={styles.faqQuestion}
                 >
                   <span>{faq.question}</span>

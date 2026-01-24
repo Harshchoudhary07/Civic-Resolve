@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { GoogleLogin } from '@react-oauth/google';
 import { HiEye, HiEyeSlash } from 'react-icons/hi2';
+import { FaLandmark, FaLock } from 'react-icons/fa';
 
 export default function CommonLogin({ role }) {
   const [email, setEmail] = useState("");
@@ -73,7 +74,7 @@ export default function CommonLogin({ role }) {
       >
         {/* Government Emblem */}
         <div className="auth-header">
-          <div className="auth-emblem">🏛️</div>
+          <div className="auth-emblem"><FaLandmark /></div>
         </div>
 
         <form onSubmit={handlePasswordLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -151,7 +152,7 @@ export default function CommonLogin({ role }) {
 
         {/* Security Badge */}
         <div className="security-badge">
-          <span>🔒</span>
+          <span><FaLock /></span>
           <span>Secure Government Portal</span>
         </div>
       </AuthCard>

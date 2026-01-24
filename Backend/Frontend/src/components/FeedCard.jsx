@@ -18,10 +18,10 @@ export default function FeedCard({ complaint, onUpvote }) {
         setShowLikeAnimation(true);
         setLikeButtonAnimate(true);
         setIsLiked(!isLiked);
-        
+
         // Call parent upvote handler
         onUpvote(complaint._id);
-        
+
         // Reset animations
         setTimeout(() => setShowLikeAnimation(false), 1000);
         setTimeout(() => setLikeButtonAnimate(false), 300);
@@ -105,25 +105,24 @@ export default function FeedCard({ complaint, onUpvote }) {
                 <h3 style={styles.title}>{complaint.title}</h3>
                 <p style={styles.description}>{complaint.description}</p>
                 {complaint.attachments && complaint.attachments.length > 0 && (
-                    <div 
+                    <div
                         style={styles.imageContainer}
                         onClick={() => setShowImageModal(true)}
                     >
                         {complaint.attachments[0].mediaType === 'video' ? (
-                            <video 
-                                src={complaint.attachments[0].url} 
+                            <video
+                                src={complaint.attachments[0].url}
                                 style={styles.video}
                                 controls
                                 playsInline
                                 preload="metadata"
-                                onMouseEnter={(e) => e.target.play()}
-                                onMouseLeave={(e) => e.target.pause()}
+                            // Note: Autoplay on hover removed due to browser security restrictions
                             />
                         ) : (
-                            <img 
-                                src={complaint.attachments[0].url} 
-                                alt="Complaint" 
-                                style={styles.image} 
+                            <img
+                                src={complaint.attachments[0].url}
+                                alt="Complaint"
+                                style={styles.image}
                             />
                         )}
                     </div>
@@ -132,8 +131,8 @@ export default function FeedCard({ complaint, onUpvote }) {
 
             {/* Actions */}
             <div style={styles.actions}>
-                <button 
-                    onClick={handleUpvoteClick} 
+                <button
+                    onClick={handleUpvoteClick}
                     className={`btn-gradient-ghost ${likeButtonAnimate ? 'like-button-animate' : ''}`}
                     style={{
                         ...styles.actionButton,
@@ -141,8 +140,8 @@ export default function FeedCard({ complaint, onUpvote }) {
                         fontWeight: isLiked ? '600' : '500'
                     }}
                 >
-                    <span style={{ 
-                        display: 'inline-flex', 
+                    <span style={{
+                        display: 'inline-flex',
                         transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                         transform: likeButtonAnimate ? 'scale(1.3)' : 'scale(1)'
                     }}>
@@ -150,8 +149,8 @@ export default function FeedCard({ complaint, onUpvote }) {
                     </span>
                     <span>{complaint.upvoteCount} Upvotes</span>
                 </button>
-                <button 
-                    onClick={fetchComments} 
+                <button
+                    onClick={fetchComments}
                     className={`btn-gradient-ghost ${showComments ? 'comment-button-active' : ''}`}
                     style={{
                         ...styles.actionButton,
@@ -159,7 +158,7 @@ export default function FeedCard({ complaint, onUpvote }) {
                         fontWeight: showComments ? '600' : '500'
                     }}
                 >
-                    <span style={{ 
+                    <span style={{
                         display: 'inline-flex',
                         transition: 'transform 0.3s ease',
                         transform: showComments ? 'rotate(15deg) scale(1.1)' : 'rotate(0) scale(1)'
@@ -210,29 +209,29 @@ export default function FeedCard({ complaint, onUpvote }) {
 
             {/* Image/Video Modal */}
             {showImageModal && complaint.attachments && complaint.attachments.length > 0 && (
-                <div 
+                <div
                     style={styles.modalOverlay}
                     onClick={() => setShowImageModal(false)}
                 >
                     <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <button 
+                        <button
                             style={styles.closeButton}
                             onClick={() => setShowImageModal(false)}
                         >
                             ✕
                         </button>
                         {complaint.attachments[0].mediaType === 'video' ? (
-                            <video 
-                                src={complaint.attachments[0].url} 
+                            <video
+                                src={complaint.attachments[0].url}
                                 style={styles.modalImage}
                                 controls
                                 autoPlay
                                 playsInline
                             />
                         ) : (
-                            <img 
-                                src={complaint.attachments[0].url} 
-                                alt="Complaint Full Size" 
+                            <img
+                                src={complaint.attachments[0].url}
+                                alt="Complaint Full Size"
                                 style={styles.modalImage}
                             />
                         )}
@@ -349,10 +348,8 @@ const styles = {
         color: 'var(--muted)',
         fontSize: '14px',
         fontWeight: '500',
-        transition: 'background 0.2s',
-        '&:hover': {
-            background: 'var(--hover)'
-        }
+        transition: 'background 0.2s'
+        // Note: :hover doesn't work in inline styles. Use onMouseEnter/onMouseLeave or CSS classes.
     },
     commentsSection: {
         background: 'var(--bg-secondary)',

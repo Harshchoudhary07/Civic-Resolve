@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HiMagnifyingGlass, HiInboxArrowDown, HiMapPin } from 'react-icons/hi2';
+import { FaCalendarAlt } from 'react-icons/fa';
 
 export default function MyComplaints() {
   const [complaints, setComplaints] = useState([]);
@@ -157,9 +158,9 @@ export default function MyComplaints() {
                   </div>
                   <h3 style={styles.listItemTitle}>{c.title}</h3>
                   <div style={styles.listItemMeta}>
-                    <span>📅 {new Date(c.createdAt).toLocaleDateString()}</span>
+                    <span><FaCalendarAlt style={{ marginRight: '6px' }} />{new Date(c.createdAt).toLocaleDateString()}</span>
                     <span>📂 {c.category}</span>
-                    <span><HiMapPin style={{display: 'inline', marginRight: '4px'}} />{c.location?.address || 'No location'}</span>
+                    <span><HiMapPin style={{ display: 'inline', marginRight: '4px' }} />{c.location?.address || 'No location'}</span>
                   </div>
                 </div>
               ) : (
@@ -171,7 +172,7 @@ export default function MyComplaints() {
                   <h3 style={styles.cardItemTitle}>{c.title}</h3>
                   <p style={styles.cardItemDesc}>{c.description.substring(0, 100)}...</p>
                   <div style={styles.cardItemMeta}>
-                    <span>📅 {new Date(c.createdAt).toLocaleDateString()}</span>
+                    <span><FaCalendarAlt style={{ marginRight: '6px' }} />{new Date(c.createdAt).toLocaleDateString()}</span>
                     <span>📂 {c.category}</span>
                   </div>
                 </div>
