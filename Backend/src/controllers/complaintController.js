@@ -106,18 +106,30 @@ const createComplaint = async (req, res, next) => {
     // Notify officials of the department about new complaint
     try {
       const { createNotification } = require('../utils/notificationService');
-      const { emitNewComplaint } = require('../config/socket');
+      const { emitNewComplaint, emitNotification } = require('../config/socket');
 
       // Find all officials in this department
       const officials = await User.find({ role: 'official', department: category, isActive: true });
 
       const notificationMessage = `New complaint filed in ${category}: "${title}"`;
 
+      // Create notifications and emit to each official
       for (const official of officials) {
-        await createNotification(official._id, notificationMessage, complaint._id);
+        const notification = await createNotification(official._id, notificationMessage, complaint._id);
+
+        // Emit real-time notification to this official
+        if (notification) {
+          emitNotification(official._id.toString(), {
+            _id: notification._id,
+            message: notificationMessage,
+            complaint: complaint._id,
+            isRead: false,
+            createdAt: new Date()
+          });
+        }
       }
 
-      // Emit real-time event for new complaint
+      // Emit new complaint event globally for sidebar updates
       emitNewComplaint(category, {
         _id: complaint._id,
         title: complaint.title,
@@ -128,6 +140,7 @@ const createComplaint = async (req, res, next) => {
       });
 
       console.log(`✅ Notified ${officials.length} officials about new complaint`);
+      console.log(`📢 Emitted new complaint event for sidebar updates`);
     } catch (notifError) {
       console.error('❌ Failed to create notifications:', notifError.message);
       // Don't throw - complaint was created successfully

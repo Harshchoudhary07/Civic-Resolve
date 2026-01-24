@@ -132,10 +132,24 @@ const updateComplaintStatus = async (complaintId, officialId, newStatus, remarkT
     // Create notification for the citizen
     const { createNotification } = require('../utils/notificationService');
     const sendEmail = require('../utils/emailService');
+    const { emitNotification } = require('../config/socket');
 
     const notificationMessage = `Your complaint "${complaint.title}" status has been updated from "${oldStatus}" to "${newStatus}"${remarkText ? ` with remark: "${remarkText}"` : ''}.`;
 
-    await createNotification(complaint.user._id, notificationMessage, complaintId);
+    // Create notification in database
+    const notification = await createNotification(complaint.user._id, notificationMessage, complaintId);
+
+    // Emit real-time notification to the citizen
+    if (notification) {
+        emitNotification(complaint.user._id.toString(), {
+            _id: notification._id,
+            message: notificationMessage,
+            complaint: complaintId,
+            isRead: false,
+            createdAt: new Date()
+        });
+        console.log(`📢 Real-time notification sent to user: ${complaint.user._id}`);
+    }
 
     // Send email notification
     try {

@@ -45,9 +45,25 @@ const getAnalytics = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, data: stats });
 });
 
+// @desc    Mark all notifications as read
+// @route   PATCH /api/official/notifications/mark-all-read
+// @access  Private (Official)
+const markAllNotificationsAsRead = asyncHandler(async (req, res) => {
+    const Notification = require('../models/Notification');
+    const result = await Notification.updateMany(
+        { user: req.user._id, isRead: false },
+        { isRead: true }
+    );
+    res.status(200).json({
+        success: true,
+        message: `Marked ${result.modifiedCount} notifications as read`
+    });
+});
+
 module.exports = {
     getDashboard,
     getComplaint,
     updateStatus,
-    getAnalytics
+    getAnalytics,
+    markAllNotificationsAsRead
 };

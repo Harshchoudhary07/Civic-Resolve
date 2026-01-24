@@ -32,11 +32,14 @@ export const NavBar = () => {
       // Listen for new notifications
       socket.on('notification', (notification) => {
         console.log('📢 New notification received:', notification);
-        setNotifications(prev => [notification, ...prev]);
-        setUnreadCount(prev => prev + 1);
         
-        // Optional: Show toast notification
-        // toast.success('New notification received!');
+        // Add to notifications list
+        setNotifications(prev => [notification, ...prev]);
+        
+        // Only increment unread count if notification is unread
+        if (!notification.isRead) {
+          setUnreadCount(prev => prev + 1);
+        }
       });
 
       return () => {
@@ -83,20 +86,24 @@ export const NavBar = () => {
       // Mark all unread notifications as read
       const unreadNotifications = notifications.filter(n => !n.isRead);
       
-      for (const notif of unreadNotifications) {
-        const endpoint = user.role === 'citizen' 
-          ? `/api/citizen/notifications/${notif._id}/read`
-          : `/api/official/notifications/${notif._id}/read`;
-        
-        await fetch(endpoint, {
-          method: 'PATCH',
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-      }
+      if (unreadNotifications.length === 0) return;
       
-      // Update local state immediately
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-      setUnreadCount(0);
+      // Use bulk endpoint for better performance
+      const endpoint = user.role === 'citizen' 
+        ? '/api/citizen/notifications/mark-all-read'
+        : '/api/official/notifications/mark-all-read';
+      
+      const response = await fetch(endpoint, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      
+      if (response.ok) {
+        // Update local state immediately
+        setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+        setUnreadCount(0);
+        console.log(`✅ Marked all notifications as read`);
+      }
     } catch (error) {
       console.error('Failed to mark all as read:', error);
     }

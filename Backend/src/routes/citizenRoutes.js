@@ -6,6 +6,7 @@ const {
   getRecentComplaints,
   getNotifications,
   markNotificationAsRead,
+  markAllNotificationsAsRead,
   getBasicProfile,
 } = require('../controllers/citizenController');
 
@@ -17,6 +18,7 @@ router.get('/complaints/recent', getRecentComplaints);
 router.get('/profile/basic', getBasicProfile);
 
 router.get('/notifications', getNotifications);
-router.put('/notifications/:id/read', markNotificationAsRead);
+router.patch('/notifications/:id/read', markNotificationAsRead);
+router.patch('/notifications/mark-all-read', markAllNotificationsAsRead);
 
 module.exports = router;

@@ -76,6 +76,21 @@ exports.markNotificationAsRead = async (req, res, next) => {
   }
 };
 
+exports.markAllNotificationsAsRead = async (req, res, next) => {
+  try {
+    const result = await Notification.updateMany(
+      { user: req.user.id, isRead: false },
+      { isRead: true }
+    );
+    res.status(200).json({
+      success: true,
+      message: `Marked ${result.modifiedCount} notifications as read`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getBasicProfile = (req, res) => {
   res.status(200).json({
     success: true,

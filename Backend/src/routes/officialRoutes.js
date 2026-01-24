@@ -4,7 +4,8 @@ const {
     getDashboard,
     getComplaint,
     updateStatus,
-    getAnalytics
+    getAnalytics,
+    markAllNotificationsAsRead
 } = require('../controllers/officialController');
 const { protect, authorize } = require('../middlewares/authMiddleware');
 
@@ -48,5 +49,7 @@ router.patch('/notifications/:id/read', async (req, res, next) => {
         next(error);
     }
 });
+
+router.patch('/notifications/mark-all-read', markAllNotificationsAsRead);
 
 module.exports = router;
