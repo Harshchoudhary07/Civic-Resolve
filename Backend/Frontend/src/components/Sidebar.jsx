@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSocket } from '../context/SocketContext';
+import { useAuth } from '../context/AuthContext';
 
 const StatCard = ({ title, count, color }) => (
   <div style={{ ...styles.statCard, borderLeft: `4px solid ${color}` }}>
@@ -13,12 +15,10 @@ export default function Sidebar() {
   const [recentComplaints, setRecentComplaints] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+  const { socket, connected } = useSocket();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +48,44 @@ export default function Sidebar() {
 
     fetchData();
   }, []);
+
+  // Listen for real-time new complaints via Socket.IO
+  useEffect(() => {
+    if (socket && connected && user) {
+      // Listen for new complaints (for citizens to see their own new complaints)
+      socket.on('new-complaint', (complaint) => {
+        console.log('🆕 New complaint received in sidebar:', complaint);
+        
+        // Add to recent complaints list
+        setRecentComplaints(prev => [complaint, ...prev].slice(0, 5));
+        
+        // Update summary counts
+        setSummary(prev => ({
+          ...prev,
+          open: prev.open + 1
+        }));
+      });
+
+      // Listen for complaint updates
+      socket.on('complaint-update', ({ complaintId, update }) => {
+        console.log('🔄 Complaint updated:', complaintId, update);
+        
+        // Update the complaint in recent list if it exists
+        setRecentComplaints(prev => 
+          prev.map(c => 
+            c._id === complaintId 
+              ? { ...c, currentStatus: update.status }
+              : c
+          )
+        );
+      });
+
+      return () => {
+        socket.off('new-complaint');
+        socket.off('complaint-update');
+      };
+    }
+  }, [socket, connected, user]);
 
   if (loading) {
     return <div style={{ padding: '1.5rem' }}>Loading...</div>;
@@ -93,16 +131,6 @@ export default function Sidebar() {
             <p style={styles.emptyText}>No new notifications.</p>
           )}
         </ul>
-      </div>
-
-      <div style={styles.section}>
-        <h3 style={styles.sectionTitle}>Appearance</h3>
-        <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          style={styles.themeToggle}
-        >
-          {theme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-        </button>
       </div>
     </>
   );

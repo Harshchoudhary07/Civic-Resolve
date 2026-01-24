@@ -117,6 +117,18 @@ const updateComplaintStatus = async (complaintId, officialId, newStatus, remarkT
 
     await complaint.save();
 
+    // Emit real-time update via Socket.IO
+    try {
+        const { emitComplaintUpdate } = require('../config/socket');
+        emitComplaintUpdate(complaintId, {
+            status: newStatus,
+            remark: remarkText,
+            updatedBy: official.name
+        });
+    } catch (socketError) {
+        console.error('Socket.IO emit error:', socketError.message);
+    }
+
     // Create notification for the citizen
     const { createNotification } = require('../utils/notificationService');
     const sendEmail = require('../utils/emailService');

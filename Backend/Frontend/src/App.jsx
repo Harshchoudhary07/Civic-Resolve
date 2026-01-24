@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Landing from "./pages/Landing";
 // import VerifyOTP from "./pages/VerifyOTP";
 import CitizenHome from "./pages/Client/CitizenHome";
@@ -32,6 +32,18 @@ import CitizenLayout from "./components/CitizenLayout";
 // Import government styles
 import "./styles/govStyles.css";
 
+// Component to conditionally render footer
+function ConditionalFooter() {
+  const location = useLocation();
+  
+  // Show footer only on landing and auth pages
+  const showFooter = ['/', '/citizen/login', '/citizen/register', '/official/login', '/official/register', 
+                      '/admin/login', '/admin/register', '/forgot-password', '/pending-approval'].includes(location.pathname) ||
+                      location.pathname.startsWith('/reset-password');
+  
+  return showFooter ? <Footer /> : null;
+}
+
 export default function App() {
   // Diagnostic check for the Google Client ID
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -49,52 +61,50 @@ export default function App() {
   }
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AuthProvider>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <NavBar />
-          <main style={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <NavBar />
+        <main style={{ flex: 1 }}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
 
-              {/* Auth Routes */}
-              <Route path="/citizen/login" element={<CommonLogin role="citizen" />} />
-              <Route path="/citizen/register" element={<CommonRegister role="citizen" />} />
-              <Route path="/official/login" element={<CommonLogin role="official" />} />
-              <Route path="/official/register" element={<CommonRegister role="official" />} />
-              <Route path="/admin/login" element={<CommonLogin role="admin" />} />
-              <Route path="/admin/register" element={<CommonRegister role="admin" />} />
-              <Route path="/pending-approval" element={<PendingVerification />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
+            {/* Auth Routes */}
+            <Route path="/citizen/login" element={<CommonLogin role="citizen" />} />
+            <Route path="/citizen/register" element={<CommonRegister role="citizen" />} />
+            <Route path="/official/login" element={<CommonLogin role="official" />} />
+            <Route path="/official/register" element={<CommonRegister role="official" />} />
+            <Route path="/admin/login" element={<CommonLogin role="admin" />} />
+            <Route path="/admin/register" element={<CommonRegister role="admin" />} />
+            <Route path="/pending-approval" element={<PendingVerification />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-              {/* Citizen Routes */}
-              <Route element={<ProtectedRoute role="citizen"><CitizenLayout /></ProtectedRoute>}>
-                <Route path="/citizen/home" element={<CitizenHome />} />
-                <Route path="/citizen/file-complaint" element={<FileComplaint />} />
-                <Route path="/citizen/my-complaints" element={<MyComplaints />} />
-                <Route path="/citizen/complaint/:id" element={<ComplaintDetails />} />
-                <Route path="/citizen/profile" element={<CitizenProfile />} />
-              </Route>
+            {/* Citizen Routes */}
+            <Route element={<ProtectedRoute role="citizen"><CitizenLayout /></ProtectedRoute>}>
+              <Route path="/citizen/home" element={<CitizenHome />} />
+              <Route path="/citizen/file-complaint" element={<FileComplaint />} />
+              <Route path="/citizen/my-complaints" element={<MyComplaints />} />
+              <Route path="/citizen/complaint/:id" element={<ComplaintDetails />} />
+              <Route path="/citizen/profile" element={<CitizenProfile />} />
+            </Route>
 
-              {/* Official Routes */}
-              <Route path="/official/dashboard" element={<ProtectedRoute role="official"><OfficialDashboard /></ProtectedRoute>} />
-              <Route path="/official/complaint/:id" element={<ProtectedRoute role="official"><OfficialComplaintDetails /></ProtectedRoute>} />
-              <Route path="/official/profile" element={<ProtectedRoute role="official"><OfficialProfile /></ProtectedRoute>} />
-              <Route path="/official/analytics" element={<ProtectedRoute role="official"><OfficialAnalytics /></ProtectedRoute>} />
+            {/* Official Routes */}
+            <Route path="/official/dashboard" element={<ProtectedRoute role="official"><OfficialDashboard /></ProtectedRoute>} />
+            <Route path="/official/complaint/:id" element={<ProtectedRoute role="official"><OfficialComplaintDetails /></ProtectedRoute>} />
+            <Route path="/official/profile" element={<ProtectedRoute role="official"><OfficialProfile /></ProtectedRoute>} />
+            <Route path="/official/analytics" element={<ProtectedRoute role="official"><OfficialAnalytics /></ProtectedRoute>} />
 
-              {/* Admin Routes */}
-              <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-              <Route path="/admin/users" element={<ProtectedRoute role="admin"><UserManagement /></ProtectedRoute>} />
-              <Route path="/admin/profile" element={<ProtectedRoute role="admin"><AdminProfile /></ProtectedRoute>} />
-              <Route path="/admin/categories" element={<ProtectedRoute role="admin"><CategoryManagement /></ProtectedRoute>} />
-              <Route path="/admin/departments" element={<ProtectedRoute role="admin"><DepartmentManagement /></ProtectedRoute>} />
-              <Route path="/admin/complaints" element={<ProtectedRoute role="admin"><ComplaintOversight /></ProtectedRoute>} />
-              <Route path="/admin/analytics" element={<ProtectedRoute role="admin"><AdminAnalytics /></ProtectedRoute>} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </AuthProvider>
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute role="admin"><UserManagement /></ProtectedRoute>} />
+            <Route path="/admin/profile" element={<ProtectedRoute role="admin"><AdminProfile /></ProtectedRoute>} />
+            <Route path="/admin/categories" element={<ProtectedRoute role="admin"><CategoryManagement /></ProtectedRoute>} />
+            <Route path="/admin/departments" element={<ProtectedRoute role="admin"><DepartmentManagement /></ProtectedRoute>} />
+            <Route path="/admin/complaints" element={<ProtectedRoute role="admin"><ComplaintOversight /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute role="admin"><AdminAnalytics /></ProtectedRoute>} />
+          </Routes>
+        </main>
+        <ConditionalFooter />
+      </div>
     </BrowserRouter>
   );
 }

@@ -106,6 +106,7 @@ const createComplaint = async (req, res, next) => {
     // Notify officials of the department about new complaint
     try {
       const { createNotification } = require('../utils/notificationService');
+      const { emitNewComplaint } = require('../config/socket');
 
       // Find all officials in this department
       const officials = await User.find({ role: 'official', department: category, isActive: true });
@@ -115,6 +116,16 @@ const createComplaint = async (req, res, next) => {
       for (const official of officials) {
         await createNotification(official._id, notificationMessage, complaint._id);
       }
+
+      // Emit real-time event for new complaint
+      emitNewComplaint(category, {
+        _id: complaint._id,
+        title: complaint.title,
+        category: complaint.category,
+        currentStatus: complaint.currentStatus,
+        createdAt: complaint.createdAt,
+        location: complaint.location
+      });
 
       console.log(`✅ Notified ${officials.length} officials about new complaint`);
     } catch (notifError) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
 import { HiDocumentText, HiBell } from 'react-icons/hi2';
 
 export const NavBar = () => {
@@ -11,21 +12,38 @@ export const NavBar = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
+  const { socket, connected } = useSocket();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Fetch notifications
+  // Fetch notifications on mount
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
-      return () => clearInterval(interval);
     }
   }, [user]);
+
+  // Listen for real-time notifications via Socket.IO
+  useEffect(() => {
+    if (socket && connected) {
+      // Listen for new notifications
+      socket.on('notification', (notification) => {
+        console.log('📢 New notification received:', notification);
+        setNotifications(prev => [notification, ...prev]);
+        setUnreadCount(prev => prev + 1);
+        
+        // Optional: Show toast notification
+        // toast.success('New notification received!');
+      });
+
+      return () => {
+        socket.off('notification');
+      };
+    }
+  }, [socket, connected]);
 
   const fetchNotifications = async () => {
     try {
@@ -60,6 +78,39 @@ export const NavBar = () => {
     }
   };
 
+  const markAllAsRead = async () => {
+    try {
+      // Mark all unread notifications as read
+      const unreadNotifications = notifications.filter(n => !n.isRead);
+      
+      for (const notif of unreadNotifications) {
+        const endpoint = user.role === 'citizen' 
+          ? `/api/citizen/notifications/${notif._id}/read`
+          : `/api/official/notifications/${notif._id}/read`;
+        
+        await fetch(endpoint, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+      }
+      
+      // Update local state immediately
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+    } catch (error) {
+      console.error('Failed to mark all as read:', error);
+    }
+  };
+
+  const handleNotificationClick = () => {
+    setShowNotifications(!showNotifications);
+    
+    // Mark all as read when opening the dropdown
+    if (!showNotifications && unreadCount > 0) {
+      markAllAsRead();
+    }
+  };
+
   const handleLogout = () => {
     setShowLogoutModal(false);
     logout(navigate);
@@ -81,16 +132,16 @@ export const NavBar = () => {
         <div style={styles.actions}>
           {user ? (
             <>
-              {user.role === 'citizen' && (
+              {/* {user.role === 'citizen' && (
                 <button onClick={() => navigate("/citizen/file-complaint")} className="btn-gradient-cta" style={styles.fileBtn}>
                   <HiDocumentText style={{ display: 'inline', marginRight: '4px', fontSize: '1.1em', verticalAlign: 'text-bottom' }} />File Complaint
                 </button>
-              )}
+              )} */}
               
               {/* Notification Bell */}
               <div style={styles.notificationContainer}>
                 <button 
-                  onClick={() => setShowNotifications(!showNotifications)} 
+                  onClick={handleNotificationClick}
                   style={styles.notificationBtn}
                   title="Notifications"
                 >
