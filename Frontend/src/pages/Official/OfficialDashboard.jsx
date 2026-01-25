@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_URL } from '../config/api';
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { HiChartBar, HiClipboardDocumentList, HiFire, HiClock } from 'react-icons/hi2';
@@ -27,8 +28,8 @@ export default function OfficialDashboard() {
 
       // Parallel fetch: Analytics + Dashboard Feed
       const [analyticsRes, dashboardRes] = await Promise.all([
-        fetch('/api/official/analytics', { headers }),
-        fetch('/api/official/dashboard', { headers })
+        fetch(\/api/official/analytics', { headers }),
+        fetch(\/api/official/dashboard', { headers })
       ]);
 
       const analyticsData = await analyticsRes.json();

@@ -17,7 +17,7 @@ export default function ComplaintOversight() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`/api/admin/complaints?page=${page}`, {
+            const res = await fetch(`${API_URL}/api/admin/complaints?page=${page}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -40,7 +40,7 @@ export default function ComplaintOversight() {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`/api/admin/complaints/${id}/archive`, {
+            const res = await fetch(`${API_URL}/api/admin/complaints/${id}/archive`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export default function ComplaintOversight() {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`/api/admin/complaints/${id}/override-status`, {
+            const res = await fetch(`${API_URL}/api/admin/complaints/${id}/override-status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

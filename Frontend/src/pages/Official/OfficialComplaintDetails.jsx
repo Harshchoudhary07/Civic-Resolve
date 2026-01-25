@@ -26,7 +26,7 @@ export default function OfficialComplaintDetails() {
     try {
       const token = localStorage.getItem('token');
       // Updated Endpoint
-      const res = await fetch(`/api/official/complaints/${id}`, {
+      const res = await fetch(`${API_URL}/api/official/complaints/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -50,7 +50,7 @@ export default function OfficialComplaintDetails() {
     try {
       const token = localStorage.getItem('token');
       // Updated Endpoint
-      const res = await fetch(`/api/official/complaints/${id}/status`, {
+      const res = await fetch(`${API_URL}/api/official/complaints/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: currentStatus, remark }),

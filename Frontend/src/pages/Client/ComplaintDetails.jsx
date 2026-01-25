@@ -17,7 +17,7 @@ export default function ComplaintDetails() {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/citizen/complaints/${id}`, {
+        const res = await fetch(`${API_URL}/api/citizen/complaints/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

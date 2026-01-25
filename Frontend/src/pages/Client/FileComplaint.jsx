@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { API_URL } from '../config/api';
 import { useNavigate } from "react-router-dom";
 import {
   HiDocumentText,
@@ -102,7 +103,7 @@ export default function FileComplaint() {
     submissionData.append('evidence', mediaFile);
 
     try {
-      const res = await fetch('/api/complaints', {
+      const res = await fetch(\/api/complaints', {
         method: 'POST',
         headers: {
           // Content-Type is set automatically by the browser for FormData

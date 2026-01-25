@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config/api';
 import { useAuth } from '../../context/AuthContext';
 
 export default function CategoryManagement() {
@@ -21,7 +22,7 @@ export default function CategoryManagement() {
     setError('');
     try {
       // No token needed for public GET
-      const res = await fetch('/api/categories');
+      const res = await fetch(\/api/categories');
       const data = await res.json();
       if (res.ok) {
         setCategories(data);
@@ -41,7 +42,7 @@ export default function CategoryManagement() {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/categories', {
+      const res = await fetch(\/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: newCategoryName, description: newCategoryDesc }),

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../../../config/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -46,7 +47,7 @@ export default function ChangePassword() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/users/change-password', {
+      const res = await fetch(\/api/users/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

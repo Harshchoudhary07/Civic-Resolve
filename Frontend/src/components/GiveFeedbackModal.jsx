@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../../../config/api';
 import { HiStar, HiXMark } from 'react-icons/hi2';
 
 export default function GiveFeedbackModal({ isOpen, onClose }) {
@@ -15,7 +16,7 @@ export default function GiveFeedbackModal({ isOpen, onClose }) {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/feedbacks', {
+      const res = await fetch(\/api/feedbacks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

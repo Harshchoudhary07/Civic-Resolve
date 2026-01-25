@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_URL } from '../config/api';
 import { useAuth } from '../../context/AuthContext';
 import { HiCamera } from 'react-icons/hi2';
 
@@ -14,7 +15,7 @@ export default function CitizenProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('/api/users/profile', {
+        const res = await fetch(\/api/users/profile', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         const data = await res.json();
@@ -37,7 +38,7 @@ export default function CitizenProfile() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/users/profile', {
+      const res = await fetch(\/api/users/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ export default function CitizenProfile() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/users/profile/picture', {
+      const res = await fetch(\/api/users/profile/picture', {
         method: 'PUT',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: uploadFormData,

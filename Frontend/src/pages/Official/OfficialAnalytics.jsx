@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_URL } from '../config/api';
 import { useAuth } from "../../context/AuthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { FaChartBar, FaClipboardList, FaBolt } from 'react-icons/fa';
@@ -21,7 +22,7 @@ export default function OfficialAnalytics() {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/official/analytics', {
+      const res = await fetch(\/api/official/analytics', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config/api';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
       const token = localStorage.getItem('token');
 
       // Fetch Analytics (Summary)
-      const analyticsRes = await fetch('/api/admin/analytics', {
+      const analyticsRes = await fetch(\/api/admin/analytics', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const analyticsData = await analyticsRes.json();
@@ -42,7 +43,7 @@ export default function AdminDashboard() {
       }
 
       // Fetch Recent Users as before
-      const usersRes = await fetch('/api/admin/users', {
+      const usersRes = await fetch(\/api/admin/users', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const usersData = await usersRes.json();

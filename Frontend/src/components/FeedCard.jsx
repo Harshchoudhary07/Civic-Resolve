@@ -36,7 +36,7 @@ export default function FeedCard({ complaint, onUpvote }) {
         setShowComments(true);
         setLoadingComments(true);
         try {
-            const res = await fetch(`/api/feed/${complaint._id}/comments`, {
+            const res = await fetch(`${API_URL}/api/feed/${complaint._id}/comments`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
             const data = await res.json();
@@ -53,7 +53,7 @@ export default function FeedCard({ complaint, onUpvote }) {
         if (!newComment.trim()) return;
 
         try {
-            const res = await fetch(`/api/feed/${complaint._id}/comment`, {
+            const res = await fetch(`${API_URL}/api/feed/${complaint._id}/comment`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

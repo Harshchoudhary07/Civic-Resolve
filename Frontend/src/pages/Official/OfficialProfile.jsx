@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { API_URL } from '../config/api';
 import { useAuth } from '../../context/AuthContext';
 import { HiCamera } from 'react-icons/hi2';
 
@@ -28,7 +29,7 @@ const OfficialProfile = () => {
     setSuccess('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/users/profile', {
+      const res = await fetch(\/api/users/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ const OfficialProfile = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/users/profile/picture', {
+      const res = await fetch(\/api/users/profile/picture', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_URL } from '../config/api';
 import { Link } from "react-router-dom";
 import { HiMagnifyingGlass, HiInboxArrowDown, HiMapPin } from 'react-icons/hi2';
 import { FaCalendarAlt } from 'react-icons/fa';
@@ -21,7 +22,7 @@ export default function MyComplaints() {
 
   const fetchComplaints = async () => {
     try {
-      const res = await fetch('/api/complaints/my-complaints', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      const res = await fetch(\/api/complaints/my-complaints', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       const data = await res.json();
       setComplaints(data);
       setFilteredComplaints(data);

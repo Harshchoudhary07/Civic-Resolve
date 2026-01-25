@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config/api';
 
 export default function DepartmentManagement() {
     const [departments, setDepartments] = useState([]);
@@ -11,7 +12,7 @@ export default function DepartmentManagement() {
 
     const fetchDepartments = async () => {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/admin/departments', {
+        const res = await fetch(\/api/admin/departments', {
             headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -23,7 +24,7 @@ export default function DepartmentManagement() {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch('/api/admin/departments', {
+            const res = await fetch(\/api/admin/departments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify(newDept)
