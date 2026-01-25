@@ -176,11 +176,6 @@ export default function CitizenHome() {
             )}
           </div>
         </div>
-
-        {/* Right Column: Sidebar */}
-        <div style={styles.sidebarColumn}>
-          {/* Empty sidebar - profile moved to left navigation */}
-        </div>
       </div>
     </div >
   );
@@ -188,26 +183,21 @@ export default function CitizenHome() {
 
 const styles = {
   container: {
-    maxWidth: "1100px",
+    maxWidth: "1400px",
     margin: "0 auto",
     padding: "20px",
     minHeight: "100vh"
   },
   layoutGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 300px",
+    display: "flex",
+    flexDirection: "column",
     gap: "24px"
-    // Note: Media queries don't work in inline styles. Use CSS classes or window.matchMedia for responsive design.
   },
   mainColumn: {
     display: "flex",
     flexDirection: "column",
-    gap: "20px"
-  },
-  sidebarColumn: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px"
+    gap: "20px",
+    width: "100%"
   },
 
   // Feed Header
