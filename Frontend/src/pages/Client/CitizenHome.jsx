@@ -202,62 +202,6 @@ export default function CitizenHome() {
             <Link to="/citizen/profile" className="btn-gradient-secondary" style={styles.outlinedButton}>View Profile</Link>
           </div>
 
-          {/* Quick Actions */}
-          <div className="card-gradient-hover" style={styles.sidebarCard}>
-            <h3 style={styles.sidebarTitle}>Quick Actions</h3>
-            <div style={styles.sidebarLinks}>
-              <Link to="/citizen/file-complaint" style={styles.sidebarLink}>
-                <span style={styles.iconWrapper}><HiDocumentText /></span>
-                File New Complaint
-              </Link>
-              <Link to="/citizen/my-complaints" style={styles.sidebarLink}>
-                <span style={styles.iconWrapper}><HiClipboardDocumentList /></span>
-                My History
-              </Link>
-              <a href="#help" style={styles.sidebarLink}>
-                <span style={styles.iconWrapper}><HiQuestionMarkCircle /></span>
-                Help Center
-              </a>
-            </div>
-          </div>
-
-          {/* Announcements */}
-          <div className="card-gradient-hover" style={styles.sidebarCard}>
-            <h3 style={styles.sidebarTitle}>
-              <HiMegaphone style={{ display: 'inline', marginRight: '8px', color: 'var(--primary)' }} />
-              Announcements
-            </h3>
-            <div style={styles.miniAnnouncement}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <HiSparkles style={{ color: '#eab308' }} />
-                <div style={styles.miniAnnounceTitle}>Live Evidence Upload</div>
-              </div>
-              <div style={styles.miniAnnounceText}>Capture photos directly in app.</div>
-            </div>
-            <div style={styles.miniAnnouncement}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <HiBolt style={{ color: '#3b82f6' }} />
-                <div style={styles.miniAnnounceTitle}>Faster Resolutions</div>
-              </div>
-              <div style={styles.miniAnnounceText}>Avg time down to 5 days.</div>
-            </div>
-          </div>
-
-          {/* Help Section - Adapted from Incoming */}
-          <div className="card-gradient-hover" style={styles.sidebarCard}>
-            <h3 style={styles.sidebarTitle}>Support</h3>
-            <div style={styles.sidebarLinks}>
-              <div style={styles.sidebarLink}>
-                <span style={styles.iconWrapper}><HiPhone /></span>
-                1800-XXX-XXXX
-              </div>
-              <div style={styles.sidebarLink}>
-                <span style={styles.iconWrapper}><HiEnvelope /></span>
-                support@civic.gov
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
     </div >
