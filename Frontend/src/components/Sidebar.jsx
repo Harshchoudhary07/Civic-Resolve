@@ -36,13 +36,23 @@ export default function Sidebar() {
           fetch(`${API_URL}/api/citizen/notifications`, { headers }),
         ]);
 
-        const summaryData = await summaryRes.json();
-        const recentData = await recentRes.json();
-        const notifData = await notifRes.json();
+        // Only parse JSON if response is OK
+        if (summaryRes.ok) {
+          const summaryData = await summaryRes.json();
+          if (summaryData.success) setSummary(summaryData.summary);
+        }
 
-        if (summaryData.success) setSummary(summaryData.summary);
-        if (recentData.success) setRecentComplaints(recentData.complaints);
-        if (notifData.success) setNotifications(notifData.notifications);
+        if (recentRes.ok) {
+          const recentData = await recentRes.json();
+          if (recentData.success) setRecentComplaints(recentData.complaints);
+        }
+
+        if (notifRes.ok) {
+          const notifData = await notifRes.json();
+          if (notifData.success) setNotifications(notifData.notifications);
+        } else {
+          console.log('Failed to fetch notifications:', notifRes.status);
+        }
       } catch (error) {
         console.error('Failed to fetch sidebar data:', error);
       } finally {
