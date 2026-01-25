@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+import { API_URL } from '../config/api';
 import { HiDocumentText, HiBell } from 'react-icons/hi2';
 import { FaLandmark, FaUser, FaKey, FaDoorOpen } from 'react-icons/fa';
 import GiveFeedbackModal from './GiveFeedbackModal'; // Add import
@@ -53,7 +54,9 @@ export const NavBar = () => {
 
   const fetchNotifications = async () => {
     try {
-      const endpoint = user.role === 'citizen' ? '/api/citizen/notifications' : '/api/official/notifications';
+      const endpoint = user.role === 'citizen'
+        ? `${API_URL}/api/citizen/notifications`
+        : `${API_URL}/api/official/notifications`;
       const res = await fetch(endpoint, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
@@ -70,8 +73,8 @@ export const NavBar = () => {
   const markAsRead = async (notificationId) => {
     try {
       const endpoint = user.role === 'citizen'
-        ? `/api/citizen/notifications/${notificationId}/read`
-        : `/api/official/notifications/${notificationId}/read`;
+        ? `${API_URL}/api/citizen/notifications/${notificationId}/read`
+        : `${API_URL}/api/official/notifications/${notificationId}/read`;
 
       await fetch(endpoint, {
         method: 'PATCH',
@@ -93,8 +96,8 @@ export const NavBar = () => {
 
       // Use bulk endpoint for better performance
       const endpoint = user.role === 'citizen'
-        ? '/api/citizen/notifications/mark-all-read'
-        : '/api/official/notifications/mark-all-read';
+        ? `${API_URL}/api/citizen/notifications/mark-all-read`
+        : `${API_URL}/api/official/notifications/mark-all-read`;
 
       const response = await fetch(endpoint, {
         method: 'PATCH',
