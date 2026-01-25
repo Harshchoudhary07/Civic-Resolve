@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { HiMapPin, HiCalendar, HiFolder } from 'react-icons/hi2';
 import { FaComment, FaLock } from 'react-icons/fa';
+import { API_URL } from '../../config/api';
 
 import GiveFeedbackModal from '../../components/GiveFeedbackModal';
 
