@@ -64,6 +64,15 @@ app.use('/api/feed', feedRoutes);
 app.use('/api/official', officialRoutes);
 app.use('/api/feedbacks', require('./routes/feedbackRoutes')); // Mount feedback routes
 
+// Root route for health checks
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Civic Resolve API Server',
+    version: '1.0.0'
+  });
+});
+
 // Health Check
 app.get('/api', (req, res) => {
   res.status(200).json({ message: 'Complaint Redressal System API is running' });
