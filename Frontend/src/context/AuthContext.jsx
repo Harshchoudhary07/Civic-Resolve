@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { API_URL } from "../config/api";
 
 const AuthContext = createContext();
 
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const res = await fetch("/api/auth/me", {
+          const res = await fetch(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json();
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }) => {
 
   const loginWithPassword = async (email, password) => {
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyEmailOtp = async (email, otp) => {
     try {
-      const res = await fetch("/api/auth/verify-email-otp", {
+      const res = await fetch(`${API_URL}/api/auth/verify-email-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -86,13 +87,13 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
       const data = await res.json();
-      
+
       if (data.success) {
         return { success: true };
       } else {
@@ -105,7 +106,7 @@ export const AuthProvider = ({ children }) => {
 
   const resendOtp = async (email) => {
     try {
-      const res = await fetch("/api/auth/resend-verification", {
+      const res = await fetch(`${API_URL}/api/auth/resend-verification`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -119,7 +120,7 @@ export const AuthProvider = ({ children }) => {
 
   const continueWithGoogle = async (credential) => {
     try {
-      const res = await fetch("/api/auth/google", {
+      const res = await fetch(`${API_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credential }),
@@ -144,7 +145,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     setUser(null);
     // Optional: Call backend logout endpoint to clear cookies
-    fetch("/api/auth/logout", { method: "POST" });
+    fetch(`${API_URL}/api/auth/logout`, { method: "POST" });
     // Redirect to landing page if navigate function is provided
     if (navigate) {
       navigate("/");
@@ -153,7 +154,7 @@ export const AuthProvider = ({ children }) => {
 
   const forgotPassword = async (email) => {
     try {
-      const res = await fetch("/api/auth/forgot-password", {
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -167,7 +168,7 @@ export const AuthProvider = ({ children }) => {
 
   const resetPassword = async (token, password) => {
     try {
-      const res = await fetch(`/api/auth/reset-password/${token}`, {
+      const res = await fetch(`${API_URL}/api/auth/reset-password/${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
