@@ -179,16 +179,7 @@ export default function CitizenHome() {
 
         {/* Right Column: Sidebar */}
         <div style={styles.sidebarColumn}>
-
-          {/* Simple Profile at Bottom */}
-          <div style={styles.sidebarProfileBottom}>
-            <div style={styles.profileBottomAvatar}>{user?.name?.charAt(0)}</div>
-            <div style={styles.profileBottomInfo}>
-              <div style={styles.profileBottomName}>{user?.name}</div>
-              <div style={styles.profileBottomRole}>CITIZEN</div>
-            </div>
-          </div>
-
+          {/* Empty sidebar - profile moved to left navigation */}
         </div>
       </div>
     </div >

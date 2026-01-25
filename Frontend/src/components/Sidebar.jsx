@@ -192,6 +192,15 @@ export default function Sidebar() {
         </ul>
       </div>
 
+      {/* User Profile at Bottom */}
+      <div style={styles.profileBottom}>
+        <div style={styles.profileBottomAvatar}>{user?.name?.charAt(0)}</div>
+        <div style={styles.profileBottomInfo}>
+          <div style={styles.profileBottomName}>{user?.name}</div>
+          <div style={styles.profileBottomRole}>{user?.role?.toUpperCase()}</div>
+        </div>
+      </div>
+
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
         <div style={styles.modalOverlay} onClick={() => setDeleteConfirm(null)}>
@@ -362,5 +371,49 @@ const styles = {
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: '500',
+  },
+
+  // Profile Bottom Styles
+  profileBottom: {
+    marginTop: 'auto',
+    padding: '16px',
+    borderTop: '1px solid var(--border)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    background: 'var(--card)',
+  },
+  profileBottomAvatar: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%)',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '16px',
+    fontWeight: '700',
+    flexShrink: 0,
+  },
+  profileBottomInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  profileBottomName: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: 'var(--text)',
+    marginBottom: '2px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  profileBottomRole: {
+    fontSize: '11px',
+    fontWeight: '500',
+    color: 'var(--muted)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
   },
 };
