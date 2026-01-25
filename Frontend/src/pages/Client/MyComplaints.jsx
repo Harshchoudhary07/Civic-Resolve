@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API_URL } from '../config/api';
+import { API_URL } from '../../config/api';
 import { Link } from "react-router-dom";
 import { HiMagnifyingGlass, HiInboxArrowDown, HiMapPin } from 'react-icons/hi2';
 import { FaCalendarAlt } from 'react-icons/fa';

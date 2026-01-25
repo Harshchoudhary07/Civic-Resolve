@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { API_URL } from '../config/api';
+import { API_URL } from '../../config/api';
 import { useAuth } from '../../context/AuthContext';
 import { HiCamera } from 'react-icons/hi2';
 
