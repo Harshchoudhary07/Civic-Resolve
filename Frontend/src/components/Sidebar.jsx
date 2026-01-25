@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import { FaTrash } from 'react-icons/fa';
+import { API_URL } from '../config/api';
 
 const StatCard = ({ title, count, color }) => (
   <div style={{ ...styles.statCard, borderLeft: `4px solid ${color}` }}>
@@ -30,9 +31,9 @@ export default function Sidebar() {
 
       try {
         const [summaryRes, recentRes, notifRes] = await Promise.all([
-          fetch('/api/citizen/dashboard', { headers }),
-          fetch('/api/citizen/complaints/recent', { headers }),
-          fetch('/api/citizen/notifications', { headers }),
+          fetch(`${API_URL}/api/citizen/dashboard`, { headers }),
+          fetch(`${API_URL}/api/citizen/complaints/recent`, { headers }),
+          fetch(`${API_URL}/api/citizen/notifications`, { headers }),
         ]);
 
         const summaryData = await summaryRes.json();
@@ -93,7 +94,7 @@ export default function Sidebar() {
   const handleDelete = async (id) => {
     setDeleting(true);
     try {
-      const res = await fetch(`/api/complaints/${id}`, {
+      const res = await fetch(`${API_URL}/api/complaints/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import FeedCard from '../../components/FeedCard';
+import { API_URL } from '../../config/api';
 import {
   HiHandRaised,
   HiDocumentText,
@@ -41,8 +42,8 @@ export default function CitizenHome() {
     try {
       const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
       const [statsRes, feedRes] = await Promise.all([
-        fetch('/api/citizen/dashboard', { headers }),
-        fetch('/api/feed?limit=20', { headers })
+        fetch(`${API_URL}/api/citizen/dashboard`, { headers }),
+        fetch(`${API_URL}/api/feed?limit=20`, { headers })
       ]);
 
       const statsData = await statsRes.json();
@@ -89,7 +90,7 @@ export default function CitizenHome() {
 
   const handleUpvote = async (complaintId) => {
     try {
-      const res = await fetch(`/api/feed/${complaintId}/upvote`, {
+      const res = await fetch(`${API_URL}/api/feed/${complaintId}/upvote`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
