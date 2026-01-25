@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_URL } from '../../config/api';
+import { API_URL } from '../config/api';
 import { HiStar, HiXMark } from 'react-icons/hi2';
 
 export default function GiveFeedbackModal({ isOpen, onClose }) {
