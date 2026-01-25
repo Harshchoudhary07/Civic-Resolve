@@ -180,26 +180,13 @@ export default function CitizenHome() {
         {/* Right Column: Sidebar */}
         <div style={styles.sidebarColumn}>
 
-          {/* User Profile Card */}
-          <div className="card-gradient-hover" style={styles.sidebarCard}>
-            <div style={styles.miniProfile}>
-              <div style={styles.miniAvatar}>{user?.name?.charAt(0)}</div>
-              <div>
-                <div style={styles.miniName}>{user?.name}</div>
-                <div style={styles.miniRole}>Citizen</div>
-              </div>
+          {/* Simple Profile at Bottom */}
+          <div style={styles.sidebarProfileBottom}>
+            <div style={styles.profileBottomAvatar}>{user?.name?.charAt(0)}</div>
+            <div style={styles.profileBottomInfo}>
+              <div style={styles.profileBottomName}>{user?.name}</div>
+              <div style={styles.profileBottomRole}>CITIZEN</div>
             </div>
-            <div style={styles.miniStatsRow}>
-              <div style={styles.miniStat}>
-                <span style={styles.miniStatValue}>{stats.total}</span>
-                <span style={styles.miniStatLabel}>Posts</span>
-              </div>
-              <div style={styles.miniStat}>
-                <span style={styles.miniStatValue}>{stats.resolved}</span>
-                <span style={styles.miniStatLabel}>Resolved</span>
-              </div>
-            </div>
-            <Link to="/citizen/profile" className="btn-gradient-secondary" style={styles.outlinedButton}>View Profile</Link>
           </div>
 
         </div>
@@ -505,5 +492,52 @@ const styles = {
     fontSize: "12px",
     color: "var(--muted)",
     lineHeight: "1.4"
+  },
+
+  // Bottom Profile Styles
+  sidebarProfileBottom: {
+    position: "fixed",
+    bottom: 0,
+    right: 0,
+    width: "320px",
+    padding: "16px",
+    background: "var(--card)",
+    borderTop: "1px solid var(--border)",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px"
+  },
+  profileBottomAvatar: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%)",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "16px",
+    fontWeight: "700",
+    flexShrink: 0
+  },
+  profileBottomInfo: {
+    flex: 1,
+    minWidth: 0
+  },
+  profileBottomName: {
+    fontSize: "14px",
+    fontWeight: "600",
+    color: "var(--text)",
+    marginBottom: "2px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap"
+  },
+  profileBottomRole: {
+    fontSize: "11px",
+    fontWeight: "500",
+    color: "var(--muted)",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
   }
 };
