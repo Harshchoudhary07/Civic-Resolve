@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./styles/theme.css";
 import "./styles/auth.css";
+import "./index.css";
+import "./styles/responsive.css";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
