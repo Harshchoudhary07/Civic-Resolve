@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { API_URL } from '../config/api';
 
 export default function OfficialComplaintDetails() {
   const { id } = useParams();

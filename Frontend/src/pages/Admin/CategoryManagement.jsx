@@ -22,7 +22,7 @@ export default function CategoryManagement() {
     setError('');
     try {
       // No token needed for public GET
-      const res = await fetch(\/api/categories');
+      const res = await fetch(`${API_URL}/api/categories`);
       const data = await res.json();
       if (res.ok) {
         setCategories(data);
@@ -42,7 +42,7 @@ export default function CategoryManagement() {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(\/api/categories', {
+      const res = await fetch(`${API_URL}/api/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: newCategoryName, description: newCategoryDesc }),

@@ -103,7 +103,7 @@ export default function FileComplaint() {
     submissionData.append('evidence', mediaFile);
 
     try {
-      const res = await fetch(\/api/complaints', {
+      const res = await fetch(`${API_URL}/api/complaints`, {
         method: 'POST',
         headers: {
           // Content-Type is set automatically by the browser for FormData

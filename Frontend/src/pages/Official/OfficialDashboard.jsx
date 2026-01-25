@@ -28,8 +28,8 @@ export default function OfficialDashboard() {
 
       // Parallel fetch: Analytics + Dashboard Feed
       const [analyticsRes, dashboardRes] = await Promise.all([
-        fetch(\/api/official/analytics', { headers }),
-        fetch(\/api/official/dashboard', { headers })
+        fetch(`${API_URL}/api/official/analytics`, { headers }),
+        fetch(`${API_URL}/api/official/dashboard`, { headers })
       ]);
 
       const analyticsData = await analyticsRes.json();

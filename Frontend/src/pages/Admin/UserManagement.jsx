@@ -20,7 +20,7 @@ export default function UserManagement() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(\/api/admin/users', {
+      const res = await fetch(`${API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -39,7 +39,7 @@ export default function UserManagement() {
   const fetchDepartments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(\/api/admin/departments', {
+      const res = await fetch(`${API_URL}/api/admin/departments`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();

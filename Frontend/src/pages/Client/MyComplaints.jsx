@@ -22,7 +22,7 @@ export default function MyComplaints() {
 
   const fetchComplaints = async () => {
     try {
-      const res = await fetch(\/api/complaints/my-complaints', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      const res = await fetch(`${API_URL}/api/complaints/my-complaints`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       const data = await res.json();
       setComplaints(data);
       setFilteredComplaints(data);

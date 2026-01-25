@@ -22,7 +22,7 @@ export default function OfficialAnalytics() {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(\/api/official/analytics', {
+      const res = await fetch(`${API_URL}/api/official/analytics`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
