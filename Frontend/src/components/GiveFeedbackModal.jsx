@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API_URL } from '../../../config/api';
+import { API_URL } from '../../config/api';
 import { HiStar, HiXMark } from 'react-icons/hi2';
 
 export default function GiveFeedbackModal({ isOpen, onClose }) {
@@ -16,7 +16,7 @@ export default function GiveFeedbackModal({ isOpen, onClose }) {
 
     setLoading(true);
     try {
-      const res = await fetch(\/api/feedbacks', {
+      const res = await fetch(`${API_URL}/api/feedbacks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ export default function GiveFeedbackModal({ isOpen, onClose }) {
             <button
               type="submit"
               className="btn-gradient-primary"
-              style={{...styles.submitBtn, opacity: (loading || rating === 0) ? 0.7 : 1}}
+              style={{ ...styles.submitBtn, opacity: (loading || rating === 0) ? 0.7 : 1 }}
               disabled={loading || rating === 0}
             >
               {loading ? 'Submitting...' : 'Submit Feedback'}

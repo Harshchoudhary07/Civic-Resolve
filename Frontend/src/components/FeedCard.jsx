@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HiHandThumbUp, HiChatBubbleLeftRight } from 'react-icons/hi2';
 import '../styles/feed-animations.css';
+import { API_URL } from '../config/api';
 
 export default function FeedCard({ complaint, onUpvote }) {
     const [showComments, setShowComments] = useState(false);

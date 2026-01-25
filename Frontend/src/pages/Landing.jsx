@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState, useRef } from "react";
-import { API_URL } from '../../../config/api';
+import { API_URL } from '../config/api';
 import "../styles/landing-animations.css";
 import {
   HiBuildingLibrary,
@@ -41,7 +41,7 @@ export default function Landing() {
     }
 
     // Fetch feedbacks
-    fetch(\/api/feedbacks')
+    fetch(`${API_URL}/api/feedbacks`)
       .then(res => res.json())
       .then(data => setFeedbacks(data))
       .catch(err => console.error('Error fetching feedbacks:', err));
