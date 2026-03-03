@@ -32,6 +32,8 @@ const userSchema = new mongoose.Schema({
   mobileNumber: { type: String },
   profilePicture: { type: String },
   aadhar: { type: String, unique: true, sparse: true },
+  resetPasswordToken: { type: String },
+  resetPasswordExpire: { type: Date },
 }, { timestamps: true });
 
 // Hash password before saving the user

@@ -32,8 +32,8 @@ const loginUser = asyncHandler(async (req, res) => {
   // Check for user email
   const user = await User.findOne({ email });
 
-  // Check if user exists, password matches, and account is active
-  if (user && (await user.matchPassword(password))) {
+  // Check if user exists, has a password set, and password matches
+  if (user && user.password && (await user.matchPassword(password))) {
     if (!user.isActive) {
       res.status(403); // Forbidden
       throw new Error('Your account has been deactivated. Please contact support.');
@@ -249,4 +249,92 @@ const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user);
 });
 
-module.exports = { loginUser, registerUser, googleLogin, logoutUser, getMe, verifyEmailOtpController, resendVerificationOtpController };
+// @desc    Forgot password - send reset link to email
+// @route   POST /api/auth/forgot-password
+// @access  Public
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error('No account found with this email address.');
+  }
+
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set token and expiration (30 minutes)
+  user.resetPasswordToken = resetPasswordToken;
+  user.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
+  await user.save({ validateBeforeSave: false });
+
+  // Create reset URL - adjust based on your frontend URL
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+  const message = `
+    <p>You have requested a password reset</p>
+    <p><a href="${resetUrl}">Click here to reset your password</a></p>
+    <p>This link will expire in 30 minutes.</p>
+    <p>If you did not request this, please ignore this email.</p>
+  `;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Password Reset Link - CivicResolve',
+      html: message,
+    });
+
+    res.status(200).json({ success: true, message: 'Password reset link has been sent to your email.' });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    res.status(500);
+    throw new Error('Email could not be sent. Please try again later.');
+  }
+});
+
+// @desc    Reset password using reset token
+// @route   POST /api/auth/reset-password/:token
+// @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  // Hash the token to compare with the one stored in the database
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    res.status(400);
+    throw new Error('Reset token is invalid or has expired.');
+  }
+
+  // Set new password
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Password has been reset successfully. You can now login with your new password.',
+  });
+});
+
+module.exports = { loginUser, registerUser, googleLogin, logoutUser, getMe, verifyEmailOtpController, resendVerificationOtpController, forgotPassword, resetPassword };
